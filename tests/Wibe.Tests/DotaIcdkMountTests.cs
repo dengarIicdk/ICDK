@@ -87,6 +87,46 @@ public sealed class DotaIcdkMountTests
     }
 
     [Fact]
+    public void Fresh_container_gets_russian_localization_without_a_mod_pak()
+    {
+        var game = Path.Combine(Path.GetTempPath(), "icdk-fresh-" + Guid.NewGuid().ToString("N")[..8]);
+        var baseDota = Path.Combine(game, "dota");
+        var russian = Path.Combine(game, "dota_russian");
+        Directory.CreateDirectory(baseDota);
+        Directory.CreateDirectory(Path.Combine(russian, "resource"));
+
+        // «пак игры» с русским текстом: свежая установка ещё не собрала ни одного мода
+        const string russianText = "\"lang\"\n{\n\t\"Language\" \"russian\"\n\t\"Tokens\"\n\t{\n\t\t\"dota_play\" \"Играть\"\n\t}\n}\n";
+        var pak = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["resource/localization/dota_russian.txt"] = System.Text.Encoding.UTF8.GetBytes(russianText),
+        };
+        Wibe.Core.Vpk.VpkWriter.Write(Path.Combine(baseDota, "pak01_dir.vpk"), pak);
+        File.WriteAllText(Path.Combine(russian, "pak01_dir.vpk"), "valve-ru");
+
+        try
+        {
+            var deployed = LanguageMount.Deploy(game, russian);
+            var locPak = Path.Combine(LanguageMount.Folder(game), "pak03_dir.vpk");
+            Assert.True(File.Exists(locPak),
+                "без собранного мода локализация не легла отдельным паком: " + string.Join(", ", deployed));
+
+            var all = Wibe.Core.Vpk.VpkReader.ReadAll(locPak);
+            Assert.True(all.ContainsKey("resource/localization/dota_danish.txt"));
+            var text = System.Text.Encoding.UTF8.GetString(all["resource/localization/dota_danish.txt"]);
+            Assert.Contains("\"Language\" \"danish\"", text);
+            Assert.Contains("Играть", text);
+        }
+        finally
+        {
+            if (Directory.Exists(game))
+            {
+                Directory.Delete(game, true);
+            }
+        }
+    }
+
+    [Fact]
     public void Base_game_folder_is_never_treated_as_a_language_source()
     {
         var game = Path.Combine(Path.GetTempPath(), "icdk-base-" + Guid.NewGuid().ToString("N")[..8]);

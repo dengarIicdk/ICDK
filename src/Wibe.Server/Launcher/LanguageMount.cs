@@ -193,9 +193,15 @@ public static class LanguageMount
     /// </summary>
     public static int EmbedLocalization(string pakPath, IReadOnlyDictionary<string, byte[]> localization)
     {
-        if (localization.Count == 0 || !File.Exists(pakPath))
+        if (localization.Count == 0)
         {
             return 0;
+        }
+
+        if (!File.Exists(pakPath))
+        {
+            // мода ещё нет (чистая установка) — локализация пойдёт отдельным паком
+            return -1;
         }
 
         var sidecar = pakPath + ".loc";
