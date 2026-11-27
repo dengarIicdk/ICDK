@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>WIBE CHANGER — макет</title>
+<style>
+  :root {
+    --bg: #0a0b0e;
+    --rail: #0d0f13;
+    --panel: #12151b;
+    --panel-2: #171b23;
+    --panel-3: #1e232d;
+    --line: #232833;
+    --line-soft: #1a1e26;
+    --copper: #e0873a;
+    --copper-2: #f2a65a;
+    --copper-dim: #6d4522;
+    --text: #ede8e0;
+    --muted: #8b867c;
+    --muted-2: #6b675f;
+    --ok: #58b183;
+    --warn: #d9a54b;
+    --r-sm: 8px;
+    --r: 12px;
+    --r-lg: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 208px minmax(0, 1fr) 372px;
+    grid-template-rows: minmax(0, 1fr) 32px;
+  }
+
+  /* ---------- rail ---------- */
+  .rail {
+    grid-row: 1 / 3;
+    background: var(--rail);
+    border-right: 1px solid var(--line-soft);
+    display: flex;
+    flex-direction: column;
+    padding: 18px 12px 12px;
+    gap: 18px;
+  }
+
+  .brand { padding: 0 8px; }
+  .brand__name {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    color: var(--copper);
+  }
+  .brand__sub {
+    margin-top: 2px;
+    font-size: 9.5px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+  }
+
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav__label {
+    padding: 0 8px 8px;
+    font-size: 9.5px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+  }
+
+  .nav__item {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    height: 34px;
+    padding: 0 9px;
+    border-radius: var(--r-sm);
+    color: var(--muted);
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .nav__item svg { width: 15px; height: 15px; opacity: .75; }
+  .nav__item span.count { font-size: 10.5px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+  .nav__item:hover { background: #14171d; color: var(--text); }
+  .nav__item.is-active {
+    background: linear-gradient(90deg, rgba(224,135,58,.16), rgba(224,135,58,.03));
+    color: var(--copper-2);
+    box-shadow: inset 2px 0 0 var(--copper);
+  }
+  .nav__item.is-active span.count { color: var(--copper); }
+  .nav__item.is-off { opacity: .45; cursor: default; }
+
+  .rail__foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+  .env {
+    border: 1px solid var(--line-soft);
+    background: var(--panel);
+    border-radius: var(--r);
+    padding: 10px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .env__row { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--muted); }
+  .env__row b { color: var(--text); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); display: inline-block; }
+
+  /* ---------- main ---------- */
+  .main {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    padding: 20px 22px 14px;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+  .head h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .head p { margin-top: 4px; color: var(--muted); font-size: 12px; }
+  .head__hint { font-size: 11px; color: var(--muted-2); text-align: right; line-height: 1.5; }
+
+  .tools { display: flex; gap: 8px; align-items: center; }
+
+  .search {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 36px;
+    padding: 0 12px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--muted);
+  }
+  .search svg { width: 14px; height: 14px; flex: none; }
+  .search input {
+    border: 0; outline: 0; background: transparent; color: var(--text);
+    font: inherit; width: 100%;
+  }
+  .search input::placeholder { color: var(--muted-2); }
+  .search kbd {
+    font: 10px/1 "Segoe UI", sans-serif;
+    color: var(--muted-2);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 3px 5px;
+  }
+
+  .chip {
+    height: 36px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--muted);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .chip:hover { color: var(--text); border-color: #2d3441; }
+  .chip.is-on { color: var(--copper-2); border-color: var(--copper-dim); background: rgba(224,135,58,.08); }
+
+  /* ---------- grid ---------- */
+  .grid {
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+    gap: 10px;
+    padding-right: 4px;
+    align-content: start;
+  }
+  .grid::-webkit-scrollbar { width: 8px; }
+  .grid::-webkit-scrollbar-thumb { background: #262b36; border-radius: 8px; }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r);
+    background: radial-gradient(120% 90% at 50% 0%, #1b212b 0%, #12151b 70%);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color .12s ease, transform .12s ease;
+  }
+  .card:hover { border-color: #333b49; transform: translateY(-1px); }
+  .card.is-selected { border-color: var(--copper); box-shadow: 0 0 0 1px rgba(224,135,58,.35), 0 10px 24px -14px rgba(224,135,58,.6); }
+  .card__img {
+    aspect-ratio: 1 / 1;
+    background: radial-gradient(70% 70% at 50% 65%, rgba(224,135,58,.10), transparent 70%);
+    display: grid;
+    place-items: center;
+    padding: 4px;
+  }
+  .card__img img { width: 100%; height: 100%; object-fit: contain; }
+  .card__name {
+    padding: 7px 8px 8px;
+    border-top: 1px solid var(--line-soft);
+    font-size: 11.5px;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #d9d4cb;
+  }
+  .card__badge {
+    position: absolute;
+    top: 6px; right: 6px;
+    font-size: 8.5px;
+    letter-spacing: .08em;
+    font-weight: 700;
+    color: #1a1108;
+    background: var(--copper);
+    border-radius: 4px;
+    padding: 2px 4px;
+  }
+  .card__count {
+    position: absolute;
+    top: 6px; left: 6px;
+    font-size: 9.5px;
+    color: var(--muted-2);
+    background: rgba(10,11,14,.7);
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- inspector ---------- */
+  .inspector {
+    background: var(--rail);
+    border-left: 1px solid var(--line-soft);
+    display: grid;
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 18px 18px 14px;
+    min-height: 0;
+  }
+
+  .ins__top { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: #1b202a;
+    border: 1px solid var(--line);
+    display: grid; place-items: center;
+    font-size: 13px; font-weight: 700; color: var(--copper-2);
+    flex: none;
+  }
+  .ins__title { min-width: 0; }
+  .ins__title h2 { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ins__title .id { margin-top: 2px; font: 10.5px/1.4 "Cascadia Mono", Consolas, monospace; color: var(--muted-2); }
+
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .compare__cell {
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r);
+    background: var(--panel);
+    padding: 8px;
+    text-align: center;
+  }
+  .compare__cell.is-new { border-color: var(--copper-dim); background: linear-gradient(180deg, rgba(224,135,58,.10), rgba(18,21,27,.9)); }
+  .compare__cell img { width: 100%; height: 132px; object-fit: contain; }
+  .compare__cell .cap {
+    margin-top: 4px;
+    font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-2);
+  }
+  .compare__cell.is-new .cap { color: var(--copper); }
+
+  .target {
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-sm);
+    background: var(--panel);
+    padding: 7px 9px;
+    font: 10px/1.5 "Cascadia Mono", Consolas, monospace;
+    color: var(--muted);
+    display: flex; gap: 8px; align-items: baseline;
+  }
+  .target b { color: var(--muted-2); font: 600 9px/1 "Segoe UI", sans-serif; letter-spacing: .1em; flex: none; }
+  .target span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .variants { display: flex; flex-direction: column; min-height: 0; gap: 8px; }
+  .variants__head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted-2);
+  }
+  .variants__list { overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px; }
+  .variants__list::-webkit-scrollbar { width: 8px; }
+  .variants__list::-webkit-scrollbar-thumb { background: #262b36; border-radius: 8px; }
+
+  .var {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: var(--r-sm);
+    border: 1px solid transparent;
+    background: var(--panel);
+    cursor: pointer;
+  }
+  .var:hover { background: var(--panel-2); }
+  .var.is-active { border-color: var(--copper-dim); background: rgba(224,135,58,.10); }
+  .var__thumb {
+    width: 38px; height: 38px; border-radius: 7px;
+    background: #0f1217; display: grid; place-items: center; overflow: hidden;
+  }
+  .var__thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .var__name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .var__meta { margin-top: 2px; font-size: 10px; color: var(--muted-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .var__size { font-size: 10px; color: var(--muted-2); font-variant-numeric: tabular-nums; }
+
+  .actions { display: flex; flex-direction: column; gap: 8px; }
+  .btn {
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    font: 600 13px/1 "Segoe UI", sans-serif;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn--primary {
+    background: linear-gradient(180deg, var(--copper-2), var(--copper));
+    color: #170f07;
+    box-shadow: 0 8px 18px -12px rgba(224,135,58,.9);
+  }
+  .btn--primary:hover { filter: brightness(1.05); }
+  .btn--ghost { background: transparent; border-color: var(--line); color: var(--text); height: 32px; font-weight: 500; font-size: 12px; }
+  .btn--ghost:hover { border-color: #333b49; background: var(--panel); }
+  .actions__row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .actions__note { font-size: 10.5px; color: var(--muted-2); text-align: center; }
+
+  /* ---------- status bar ---------- */
+  .statusbar {
+    grid-column: 2 / 4;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 22px;
+    border-top: 1px solid var(--line-soft);
+    background: #0b0d11;
+    font-size: 10.5px;
+    color: var(--muted-2);
+  }
+  .statusbar b { color: var(--muted); font-weight: 500; }
+  .statusbar .sep { color: #2b3040; }
+  .statusbar .right { margin-left: auto; display: flex; gap: 14px; }
+  .statusbar .ok { color: var(--ok); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="rail">
+    <div class="brand">
+      <div class="brand__name">WIBE</div>
+      <div class="brand__sub">changer · кузница</div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav__label">Категории</div>
+      <div class="nav__item is-active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 20c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"/></svg>
+        <span>Герои</span><span class="count">141</span>
+      </div>
+      <div class="nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17c2-5 5-7 8-7s6 2 8 7"/><circle cx="12" cy="6" r="2.6"/></svg>
+        <span>Курьеры</span><span class="count">160</span>
+      </div>
+      <div class="nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 21V9l6-4 6 4v12"/><path d="M10 21v-6h4v6"/></svg>
+        <span>Строения</span><span class="count">629</span>
+      </div>
+      <div class="nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 19l4-8 3 3 3-6 4 11z"/></svg>
+        <span>Крипы</span><span class="count">233</span>
+      </div>
+      <div class="nav__item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l3 6 6 .8-4.4 4.3 1 6.4-5.6-3-5.6 3 1-6.4L3 9.8 9 9z"/></svg>
+        <span>Варды</span><span class="count">109</span>
+      </div>
+      <div class="nav__item is-off">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l8-4 8 4-8 4z"/><path d="M4 12l8 4 8-4"/><path d="M4 17l8 4 8-4"/></svg>
+        <span>Карта</span><span class="count">эксп.</span>
+      </div>
+      <div class="nav__item is-off">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/></svg>
+        <span>HUD · Звук</span><span class="count">49k</span>
+      </div>
+    </nav>
+
+    <div class="rail__foot">
+      <div class="env">
+        <div class="env__row"><span><span class="dot"></span> Клиент</span><b>134/134</b></div>
+        <div class="env__row"><span>Сборка</span><b>26825343</b></div>
+        <div class="env__row"><span>Папка</span><b>dota_russian</b></div>
+        <div class="env__row"><span>Слот</span><b>pak06</b></div>
+      </div>
+      <button class="btn btn--ghost">Проверить окружение</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="head">
+      <div>
+        <h1>Кузница</h1>
+        <p>141 герой · заменяем модель по тому же пути, что присылает сервер</p>
+      </div>
+      <div class="head__hint">Моды видны только тебе<br>и работают в рейтинге</div>
+    </div>
+
+    <div class="tools">
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+        <input placeholder="Найти героя — axe, invoker, qop…">
+        <kbd>ctrl K</kbd>
+      </label>
+      <button class="chip is-on">Только с заменой</button>
+      <button class="chip">По алфавиту</button>
+    </div>
+
+    <section class="grid">
+      <!-- карточки -->
+      <div class="card is-selected">
+        <span class="card__count">7</span>
+        <span class="card__badge">CUSTOM</span>
+        <div class="card__img"><img src="assets/axe.png" alt=""></div>
+        <div class="card__name">Axe</div>
+      </div>
+      <div class="card">
+        <span class="card__count">24</span>
+        <div class="card__img"><img src="assets/invoker.png" alt=""></div>
+        <div class="card__name">Invoker</div>
+      </div>
+      <div class="card">
+        <span class="card__count">18</span>
+        <div class="card__img"><img src="assets/juggernaut.png" alt=""></div>
+        <div class="card__name">Juggernaut</div>
+      </div>
+      <div class="card">
+        <span class="card__count">21</span>
+        <div class="card__img"><img src="assets/crystal_maiden.png" alt=""></div>
+        <div class="card__name">Crystal Maiden</div>
+      </div>
+      <div class="card">
+        <span class="card__count">19</span>
+        <div class="card__img"><img src="assets/pudge.png" alt=""></div>
+        <div class="card__name">Pudge</div>
+      </div>
+      <div class="card">
+        <span class="card__count">16</span>
+        <div class="card__img"><img src="assets/lina.png" alt=""></div>
+        <div class="card__name">Lina</div>
+      </div>
+      <div class="card">
+        <span class="card__count">12</span>
+        <div class="card__img"><img src="assets/phantom_assassin.png" alt=""></div>
+        <div class="card__name">Phantom Assassin</div>
+      </div>
+      <div class="card">
+        <span class="card__count">11</span>
+        <div class="card__img"><img src="assets/storm_spirit.png" alt=""></div>
+        <div class="card__name">Storm Spirit</div>
+      </div>
+      <div class="card">
+        <span class="card__count">9</span>
+        <div class="card__img"><img src="assets/axe.png" alt="" style="filter:hue-rotate(140deg)"></div>
+        <div class="card__name">Axe (2)</div>
+      </div>
+      <div class="card">
+        <span class="card__count">22</span>
+        <div class="card__img"><img src="assets/invoker.png" alt="" style="filter:hue-rotate(200deg)"></div>
+        <div class="card__name">Invoker (2)</div>
+      </div>
+    </section>
+  </main>
+
+  <aside class="inspector">
+    <div class="ins__top">
+      <div class="avatar">AX</div>
+      <div class="ins__title">
+        <h2>Axe</h2>
+        <div class="id">npc_dota_hero_axe</div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare__cell">
+        <img src="assets/axe.png" alt="">
+        <div class="cap">сейчас</div>
+      </div>
+      <div class="compare__cell is-new">
+        <img src="assets/juggernaut.png" alt="">
+        <div class="cap">будет</div>
+      </div>
+    </div>
+
+    <div class="target"><b>ПУТЬ</b><span>models/heroes/axe/axe.vmdl_c</span></div>
+
+    <div class="variants">
+      <div class="variants__head"><span>Замены</span><span>12</span></div>
+      <div class="variants__list">
+        <div class="var is-active">
+          <div class="var__thumb"><img src="assets/juggernaut.png" alt=""></div>
+          <div>
+            <div class="var__name">axe_carnival_base.vmdl_c</div>
+            <div class="var__meta">axe_carnival</div>
+          </div>
+          <div class="var__size">1,3 МБ</div>
+        </div>
+        <div class="var">
+          <div class="var__thumb"><img src="assets/pudge.png" alt=""></div>
+          <div>
+            <div class="var__name">axe_bare.vmdl_c</div>
+            <div class="var__meta">ti9_jungle_axe</div>
+          </div>
+          <div class="var__size">1,1 МБ</div>
+        </div>
+        <div class="var">
+          <div class="var__thumb"><img src="assets/lina.png" alt=""></div>
+          <div>
+            <div class="var__name">reaver.vmdl_c</div>
+            <div class="var__meta">reaver</div>
+          </div>
+          <div class="var__size">190 КБ</div>
+        </div>
+        <div class="var">
+          <div class="var__thumb"><img src="assets/storm_spirit.png" alt=""></div>
+          <div>
+            <div class="var__name">dragon_axe.vmdl_c</div>
+            <div class="var__meta">dragon_axe</div>
+          </div>
+          <div class="var__size">80 КБ</div>
+        </div>
+        <div class="var">
+          <div class="var__thumb"><img src="assets/crystal_maiden.png" alt=""></div>
+          <div>
+            <div class="var__name">axe_dressed_to_cull.vmdl_c</div>
+            <div class="var__meta">dressed_to_cull</div>
+          </div>
+          <div class="var__size">72 КБ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="actions__row">
+        <button class="btn btn--primary">Заменить модель</button>
+        <button class="btn btn--ghost" style="height:38px;padding:0 14px">Снять</button>
+      </div>
+      <div class="actions__note">пак pak05 · crc 0x5890d3a8 · 1,3 МБ</div>
+    </div>
+  </aside>
+
+  <footer class="statusbar">
+    <span class="ok">● Готово</span>
+    <span class="sep">|</span>
+    <span>Dota 2 <b>не запущена</b></span>
+    <span class="sep">|</span>
+    <span>Индекс <b>388 776</b> файлов</span>
+    <div class="right">
+      <span>Портреты <b>141/141</b></span>
+      <span>Кеш <b>87 МБ</b></span>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

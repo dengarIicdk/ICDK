@@ -1,0 +1,167 @@
+//! The author's drafts: the drafts, one saved, one started from a mod in My mods, a style's VPK or picture
+//! picked, one deleted, one written out as an archive for the catalog's maintainer, and one sent
+//! to the catalog's upload API. The thinking is in creator.rs and creator_upload.rs; this asks
+//! the user for the files and where to save, and puts the request on the network.
+
+use serde_json::{json, Map, Value};
+
+use crate::creator::Creator;
+use crate::i18n::t;
+use crate::owner::{arg, Owner, R};
+use crate::tools::creator_upload::{self, embedded_upload_token, UPLOAD_CONSENT_VERSION};
+
+pub const CHANNELS: &[&str] = &[
+    "creator:list",
+    "creator:accept",
+    "creator:history",
+    "creator:save",
+    "creator:attach",
+    "creator:fromRecord",
+    "creator:remove",
+    "creator:export",
+    "creator:upload",
+];
+
+/// The previews the window drew, one per style, as the upload and the archive take them.
+fn previews(v: &Value) -> Vec<Option<Vec<u8>>> {
+    v.as_array().map(|a| a.iter().map(|p| crate::owner::bytes_of(p).ok().flatten()).collect()).unwrap_or_default()
+}
+
+pub fn handle(o: &Owner, channel: &str, args: &[Value]) -> Option<R> {
+    CHANNELS.contains(&channel).then(|| Ok(answer(o, channel, args)))
+}
+
+/// `{ ok: true, ...fields }`, or `{ error }`.
+fn spread(r: Result<Value, String>) -> Value {
+    match r {
+        Ok(v) => {
+            let mut out = Map::new();
+            out.insert("ok".into(), Value::Bool(true));
+            if let Some(o) = v.as_object() {
+                out.extend(o.clone());
+            }
+            Value::Object(out)
+        }
+        Err(e) => json!({ "error": e }),
+    }
+}
+
+/// The path a dialog answered with, or None when it was cancelled.
+fn picked(res: &Value, many: bool) -> Option<String> {
+    if res.get("canceled") == Some(&Value::Bool(true)) {
+        return None;
+    }
+    let p = if many {
+        res.get("filePaths").and_then(Value::as_array).and_then(|a| a.first()).map(crate::js::string)
+    } else {
+        res.get("filePath").filter(|v| crate::js::truthy(v)).map(crate::js::string)
+    };
+    p.filter(|p| !p.is_empty())
+}
+
+fn answer(o: &Owner, channel: &str, args: &[Value]) -> Value {
+    let a0 = arg(args, 0);
+    let store = Creator::new(&o.opts.user_data);
+    let id = crate::js::string(&a0);
+    spread(match channel {
+        "creator:list" => Ok(json!({
+            "drafts": store.list().iter().map(|d| store.shown(d)).collect::<Vec<_>>(),
+            "consent": store.consent(UPLOAD_CONSENT_VERSION),
+            // sending needs the token a release carries; a source checkout has none
+            "uploader": embedded_upload_token(&o.opts.app_root).is_some(),
+        })),
+        "creator:accept" => {
+            store.accept_terms(UPLOAD_CONSENT_VERSION, &crate::mods_listing::iso_now()).map(|c| json!({ "consent": c }))
+        }
+        "creator:history" => (|| {
+            let Some(token) = embedded_upload_token(&o.opts.app_root) else {
+                return Ok(json!({ "items": [] }));
+            };
+            let net = o.core().net.clone();
+            let items = creator_upload::history(&net, &token, creator_upload::UPLOAD_API);
+            let notes = o.opts.user_data.join("creator-notes.json");
+            Ok(json!({ "items": creator_upload::with_notes(&net, items, &notes) }))
+        })(),
+        "creator:save" => {
+            let fields = arg(args, 1);
+            let fields = if crate::js::truthy(&fields) { fields } else { json!({}) };
+            let id = crate::js::truthy(&a0).then_some(id);
+            store.save(id.as_deref(), &fields).map(|d| json!({ "draft": store.shown(&d) }))
+        }
+        "creator:attach" => (|| {
+            let vpk = arg(args, 2).as_str() == Some("vpk");
+            let filters = if vpk {
+                json!([{ "name": "VPK", "extensions": ["vpk"] }])
+            } else {
+                json!([{ "name": t("Картинки и видео", &[]), "extensions": ["png", "jpg", "jpeg", "webp", "gif", "mp4", "webm"] }])
+            };
+            let res = o.shell.request(
+                "dialog.open",
+                vec![json!({
+                    "title": if vpk { t("VPK мода", &[]) } else { t("Картинка мода", &[]) },
+                    "properties": ["openFile"],
+                    "filters": filters,
+                })],
+            )?;
+            let Some(from) = picked(&res, true) else { return Ok(json!({ "cancelled": true })) };
+            let d =
+                store.attach(&id, &arg(args, 1), if vpk { "vpk" } else { "picture" }, std::path::Path::new(&from))?;
+            Ok(json!({ "draft": store.shown(&d) }))
+        })(),
+        "creator:fromRecord" => (|| {
+            let mut c = o.core();
+            let mut rec = c.library.find(&a0).cloned().ok_or_else(|| t("Мод не найден", &[]))?;
+            // the fingerprint the listing works out, so a catalog file dragged in reads the same here
+            if let Some(fp) =
+                c.installer.analyze_record(&crate::overlays::files_of(&rec["files"])).and_then(|a| a.get("fp").cloned())
+            {
+                rec["fp"] = fp;
+            }
+            let fingerprints = &mut c.fingerprints;
+            match crate::tools::own_work::own_work(&rec, &mut |fp| fingerprints.matches(Some(fp)).is_some()) {
+                None => return Err(t("Этот мод сделал не ты: публикует его автор", &[])),
+                Some(Err(why)) => return Err(why),
+                Some(Ok(())) => {}
+            }
+            let vpk = crate::owner::owner_mods::single_vpk(&c.installer, &rec)?;
+            drop(c);
+            let category = crate::js::string(rec.get("categoryId").unwrap_or(&Value::Null));
+            let fields = json!({
+                "name": crate::js::string(rec.get("name").unwrap_or(&Value::Null)),
+                // "imported" and "combined" are this app's shelves, not catalog categories
+                "category": if category == "imported" || category == "combined" { String::new() } else { category },
+            });
+            let d = store.draft_around(&fields, &vpk)?;
+            Ok(json!({ "draft": store.shown(&d) }))
+        })(),
+        "creator:remove" => store.remove(&id).map(|_| json!({})),
+        "creator:export" => (|| {
+            let previews = previews(&arg(args, 1));
+            let (name, zip) = store.bundle(&id, &previews)?;
+            let res = o.shell.request(
+                "dialog.save",
+                vec![json!({
+                    "title": t("Сохранить мод для каталога", &[]),
+                    "defaultPath": o.opts.downloads.join(&name).to_string_lossy(),
+                    "filters": [{ "name": "ZIP", "extensions": ["zip"] }],
+                })],
+            )?;
+            let Some(to) = picked(&res, false) else { return Ok(json!({ "cancelled": true })) };
+            std::fs::write(&to, &zip).map_err(|e| e.to_string())?;
+            Ok(json!({ "path": to, "size": zip.len() }))
+        })(),
+        "creator:upload" => (|| {
+            if store.consent(UPLOAD_CONSENT_VERSION).get("accepted") != Some(&Value::Bool(true)) {
+                return Err(t("Сначала прими условия загрузки", &[]));
+            }
+            let Some(token) = embedded_upload_token(&o.opts.app_root) else {
+                return Err(t("Нет токена", &[]));
+            };
+            let (draft, styles) = store.upload_bundle(&id, &previews(&arg(args, 1)))?;
+            let net = o.core().net.clone();
+            let sent = creator_upload::submit_mod(&net, &draft, &styles, &token, creator_upload::UPLOAD_API)?;
+            Ok(json!({ "url": sent.pr_url, "id": sent.id }))
+        })(),
+        _ => Err(format!("no handler for {channel}")),
+    })
+}

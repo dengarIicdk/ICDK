@@ -1,0 +1,496 @@
+{
+  "note": "\u042D\u0442\u0430\u043B\u043E\u043D \u0440\u0430\u0431\u043E\u0447\u0438\u0445 \u0433\u0435\u0440\u043E\u0435\u0432. \u041C\u0435\u043D\u044F\u0442\u044C \u0442\u043E\u043B\u044C\u043A\u043E \u0432\u043C\u0435\u0441\u0442\u0435 \u0441 \u043E\u0441\u043E\u0437\u043D\u0430\u043D\u043D\u044B\u043C \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435\u043C \u0441\u0431\u043E\u0440\u043A\u0438: WIBE_GOLDEN_UPDATE=1.",
+  "heroes": [
+    {
+      "hero": "axe",
+      "picks": [
+        {
+          "slot": "head",
+          "item_id": 13543
+        },
+        {
+          "slot": "armor",
+          "item_id": 25824
+        },
+        {
+          "slot": "belt",
+          "item_id": 25825
+        },
+        {
+          "slot": "weapon",
+          "item_id": 25828
+        },
+        {
+          "slot": "body",
+          "item_id": 12964
+        }
+      ],
+      "styles": {}
+    },
+    {
+      "hero": "pudge",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 7756
+        },
+        {
+          "slot": "weapon",
+          "item_id": 8010
+        },
+        {
+          "slot": "back",
+          "item_id": 26782
+        },
+        {
+          "slot": "head",
+          "item_id": 9252
+        },
+        {
+          "slot": "shoulder",
+          "item_id": 9231
+        },
+        {
+          "slot": "belt",
+          "item_id": 12806
+        }
+      ],
+      "styles": {}
+    },
+    {
+      "hero": "queenofpain",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 12930
+        },
+        {
+          "slot": "head",
+          "item_id": 29615
+        },
+        {
+          "slot": "weapon",
+          "item_id": 12337
+        }
+      ],
+      "styles": {
+        "body": 1
+      }
+    },
+    {
+      "hero": "drow_ranger",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 19090
+        },
+        {
+          "slot": "weapon",
+          "item_id": 37144
+        },
+        {
+          "slot": "head",
+          "item_id": 19094
+        },
+        {
+          "slot": "legs",
+          "item_id": 19091
+        }
+      ],
+      "styles": {
+        "body": 1
+      }
+    },
+    {
+      "hero": "phantom_assassin",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 7247
+        },
+        {
+          "slot": "head",
+          "item_id": 36070
+        },
+        {
+          "slot": "weapon",
+          "item_id": 19180
+        }
+      ],
+      "styles": {}
+    },
+    {
+      "hero": "terrorblade",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 5957
+        }
+      ],
+      "styles": {}
+    },
+    {
+      "hero": "juggernaut",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 9059
+        },
+        {
+          "slot": "weapon",
+          "item_id": 12296
+        },
+        {
+          "slot": "head",
+          "item_id": 30261
+        }
+      ],
+      "styles": {}
+    },
+    {
+      "hero": "invoker",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 13042
+        },
+        {
+          "slot": "head",
+          "item_id": 7986
+        }
+      ],
+      "styles": {}
+    },
+    {
+      "hero": "antimage",
+      "picks": [
+        {
+          "slot": "body",
+          "item_id": 13783
+        },
+        {
+          "slot": "weapon",
+          "item_id": 7277
+        }
+      ],
+      "styles": {}
+    }
+  ],
+  "models": [
+    {
+      "path": "models/heroes/antimage/antimage.vmdl_c",
+      "size": 2417120,
+      "sha256": "f6e854c5020c57363dba1a942bcd52f74ca8a3f88948e4cdd04dbe41312c4c22"
+    },
+    {
+      "path": "models/heroes/antimage/antimage_arms.vmdl_c",
+      "size": 2057,
+      "sha256": "01d833e203fceb9703dad5a6527d4b2fff19cb8185509395a814c3075a29282a"
+    },
+    {
+      "path": "models/heroes/antimage/antimage_belt.vmdl_c",
+      "size": 220032,
+      "sha256": "ec7e3b850155ae749be486c516e81909076fe3996c1fcec3397983186217aa7a"
+    },
+    {
+      "path": "models/heroes/antimage/antimage_chest.vmdl_c",
+      "size": 2057,
+      "sha256": "5404b95baed8b46d01ada5644eb59cbe76b0a73cb8e2692a88815537b997885c"
+    },
+    {
+      "path": "models/heroes/antimage/antimage_head.vmdl_c",
+      "size": 193142,
+      "sha256": "6dda3b0810301eae37a8dcb0dfcbbd33a3bf167cf7e04b8b35f504760cf5ae26"
+    },
+    {
+      "path": "models/heroes/antimage/antimage_offhand_weapon.vmdl_c",
+      "size": 118373,
+      "sha256": "d3d3b0d3082ba36abd60f176af1b0571cd58b43368a0ce8602e8cdcce8fc2ac2"
+    },
+    {
+      "path": "models/heroes/antimage/antimage_weapon.vmdl_c",
+      "size": 118401,
+      "sha256": "5a9a98e6bb184fd42fc65a7e45c5d2f20431a85c8bba50664ccd71c75b9344e4"
+    },
+    {
+      "path": "models/heroes/antimage_female/antimage_female_clothing.vmdl_c",
+      "size": 4110,
+      "sha256": "557e79e2061400a42eaa828b6d9f4edca7149201592dd615d04a0e4717d94bf2"
+    },
+    {
+      "path": "models/heroes/antimage_female/antimage_female_hair.vmdl_c",
+      "size": 4110,
+      "sha256": "f0c10fbf4f5391c8a09eb5a11a91d025833e2b638346453564af1e7b40301deb"
+    },
+    {
+      "path": "models/heroes/antimage_female/antimage_female_offhand.vmdl_c",
+      "size": 4110,
+      "sha256": "de094c385e6d71675328ef6da9048747da6c8a58239bace39d98d04d7c47f507"
+    },
+    {
+      "path": "models/heroes/antimage_female/antimage_female_weapon.vmdl_c",
+      "size": 4110,
+      "sha256": "c55900fe7c09e69aa98fa901ace2dd0eb0b648fac9bf37333d52ae7fbd30bb81"
+    },
+    {
+      "path": "models/heroes/axe/axe.vmdl_c",
+      "size": 1238596,
+      "sha256": "42b482f181a3c05d9cd01fe6fac3a9b329973b415f5286ed66dab06cfc06a84e"
+    },
+    {
+      "path": "models/heroes/axe/axe_armor.vmdl_c",
+      "size": 115053,
+      "sha256": "ba7155b1e05b0c6677b3373da093856f2292fac6ab4e82846e28e9aa052649bd"
+    },
+    {
+      "path": "models/heroes/axe/axe_belt.vmdl_c",
+      "size": 64645,
+      "sha256": "73ef53d3f076bd86a0b7ad5145c02eecad4ae4280f48e9c82a2c8d1ed57abbea"
+    },
+    {
+      "path": "models/heroes/axe/axe_ponytail.vmdl_c",
+      "size": 357836,
+      "sha256": "7f32ec36dcd9ad1b9f000614a676e39a574365b735bcb3e0265102b4d9008ab8"
+    },
+    {
+      "path": "models/heroes/axe/axe_weapon.vmdl_c",
+      "size": 154127,
+      "sha256": "4b8ce2be1c55c86673e9cff757d655d580eb1460adfbca41fb1f129daeadbed7"
+    },
+    {
+      "path": "models/heroes/drow/drow_armor.vmdl_c",
+      "size": 2660573,
+      "sha256": "d1b50583373cfe91ba61ee743c3070a453b9fe69f287ea4a1cdf255845b6be7b"
+    },
+    {
+      "path": "models/heroes/drow/drow_base.vmdl_c",
+      "size": 7876424,
+      "sha256": "9a0283395331430fafdbf0b2476f0e23634237128a4bbf044346570a8f6962d2"
+    },
+    {
+      "path": "models/heroes/drow/drow_bracer.vmdl_c",
+      "size": 257802,
+      "sha256": "8384641cf9dcc2c59730263ff65b98d4297bfd6bed77ea79b976c9d338569a0e"
+    },
+    {
+      "path": "models/heroes/drow/drow_cape.vmdl_c",
+      "size": 1526799,
+      "sha256": "25dfd40999721e8eb5fffa6256cdb6197a839f7c807864508f9c949d94be59a7"
+    },
+    {
+      "path": "models/heroes/drow/drow_haircowl.vmdl_c",
+      "size": 1022274,
+      "sha256": "00512d7892f4ef711ddb7358e2be6c9937855b1abe38a8c83812d2734ff9de93"
+    },
+    {
+      "path": "models/heroes/drow/drow_legs.vmdl_c",
+      "size": 480147,
+      "sha256": "06622fb2a0533209ece31478ec46b22ea752dba6dea654645ad6731fe1faec7f"
+    },
+    {
+      "path": "models/heroes/drow/drow_quiver.vmdl_c",
+      "size": 242105,
+      "sha256": "5e7f9df46c0ba848bdf99523d1c1e4aa2d36b0d1a4b2c4290e4300f4d51cd09e"
+    },
+    {
+      "path": "models/heroes/drow/drow_weapon.vmdl_c",
+      "size": 1695517,
+      "sha256": "363b9c1e0aa621fe8c165cdb59bb9bbee3569f89cff9a9fd8ab18531be6e07e0"
+    },
+    {
+      "path": "models/heroes/invoker/forge_spirit.vmdl_c",
+      "size": 303693,
+      "sha256": "15cfebe627ea20abe11a0920d50a9607763f58a34c9313fe0169a09ed50ccff9"
+    },
+    {
+      "path": "models/heroes/invoker/invoker.vmdl_c",
+      "size": 2480522,
+      "sha256": "586cb804e7427beb4f94082d15fa3fb3de3642831eff9cc75e70bdbefdcf59a9"
+    },
+    {
+      "path": "models/heroes/invoker/invoker_bracer.vmdl_c",
+      "size": 122973,
+      "sha256": "5e02d22fbbe552323f1936cb1973efbf20bb06e49a3b1ff068f487c54a0aaf76"
+    },
+    {
+      "path": "models/heroes/invoker/invoker_cape.vmdl_c",
+      "size": 37969,
+      "sha256": "600d93971dda848ad3ae2c3887e8cbac8521686d3b217b2023f721404b5215d2"
+    },
+    {
+      "path": "models/heroes/invoker/invoker_dress.vmdl_c",
+      "size": 2058,
+      "sha256": "8167158d4889dce9ab06d950b6dd61743c66a4a201a08f50d21058b52c0851a5"
+    },
+    {
+      "path": "models/heroes/invoker/invoker_hair.vmdl_c",
+      "size": 64587,
+      "sha256": "8d8c706b0161972a9c6701635506a4c3484bfd629d24dd4854c6a8e96110f161"
+    },
+    {
+      "path": "models/heroes/invoker/invoker_head.vmdl_c",
+      "size": 2058,
+      "sha256": "703c86aead58621e4ac924d668869591f75d61b4a2146274854c99c286a66ed9"
+    },
+    {
+      "path": "models/heroes/invoker/invoker_shoulder.vmdl_c",
+      "size": 81996,
+      "sha256": "97d882281ae9dfed04e2989f1fa4b41baebf787320f0ff560b20fef3e4a11722"
+    },
+    {
+      "path": "models/heroes/invoker_kid/invoker_kid_cape.vmdl_c",
+      "size": 4110,
+      "sha256": "ac7c3999ad45198d023476c24d45bf09798daf937d2144c1f0bc4ed6443b1084"
+    },
+    {
+      "path": "models/heroes/invoker_kid/invoker_kid_hair.vmdl_c",
+      "size": 4110,
+      "sha256": "796a9639dd30de52c51bf41baf5ad5893a31499e76a523d7a5ead50131c070df"
+    },
+    {
+      "path": "models/heroes/invoker_kid/invoker_kid_shoulder.vmdl_c",
+      "size": 4110,
+      "sha256": "dc5a2e55048f5358c4019f7e7f53e7e77546e18df1e5140d50508a71f7816a11"
+    },
+    {
+      "path": "models/heroes/invoker_kid/invoker_kid_sleeves.vmdl_c",
+      "size": 4110,
+      "sha256": "9f5517df6122c94ceb3ff12fc5c7d6c76494154dc4507848187775cc01e4af60"
+    },
+    {
+      "path": "models/heroes/juggernaut/juggernaut.vmdl_c",
+      "size": 10999439,
+      "sha256": "70cb60b97647d0f90aaffdaec1b8fba7f7ab542e83a935f364e055d5ecc354cd"
+    },
+    {
+      "path": "models/heroes/juggernaut/jugg_mask.vmdl_c",
+      "size": 115381,
+      "sha256": "b6387a910c4964715316220b4d4b07aabd1087d12f1348b01d8b5361df121c86"
+    },
+    {
+      "path": "models/heroes/juggernaut/jugg_sword.vmdl_c",
+      "size": 94732,
+      "sha256": "6d656e1b0298706024cb8a45a1e51496b65c6cde442c85015082875ac2bab8d1"
+    },
+    {
+      "path": "models/heroes/phantom_assassin/phantom_assassin.vmdl_c",
+      "size": 2370540,
+      "sha256": "643c457ff8eb3b5e1888e14df52d92f6e41a4842331faf797a6971bf25fe2326"
+    },
+    {
+      "path": "models/heroes/phantom_assassin/phantom_assassin_belt.vmdl_c",
+      "size": 4431,
+      "sha256": "123bd80bb260e2717d8104054617de01ea11837e5aa8634b424e95f3aeb121ce"
+    },
+    {
+      "path": "models/heroes/phantom_assassin/phantom_assassin_cape.vmdl_c",
+      "size": 4431,
+      "sha256": "9f5d4bbbbd393dbb5c06be506b84b0e7ddfabc5a565b6c24556c2acd225fe024"
+    },
+    {
+      "path": "models/heroes/phantom_assassin/phantom_assassin_head.vmdl_c",
+      "size": 4431,
+      "sha256": "ac9a75e5c76e36339e5c4c44755d28a30f68bf9b0b1bff6aed45856a17923043"
+    },
+    {
+      "path": "models/heroes/phantom_assassin/phantom_assassin_helmet.vmdl_c",
+      "size": 156403,
+      "sha256": "effa400122179e6ca3e6417e3f730c38feebe7015f59290c574bef4b6c620e69"
+    },
+    {
+      "path": "models/heroes/phantom_assassin/phantom_assassin_weapon.vmdl_c",
+      "size": 164524,
+      "sha256": "83ddf5089731057d42a89e577400541f27ddfb4e7473b483568d470e68b5353d"
+    },
+    {
+      "path": "models/heroes/pudge/back.vmdl_c",
+      "size": 1169546,
+      "sha256": "40700670ea4895138f3965b707440c25c76a4cc69edf3ec12f71f3502e02e82b"
+    },
+    {
+      "path": "models/heroes/pudge/belt.vmdl_c",
+      "size": 83970,
+      "sha256": "e51a6d738f98687593e265dd6f64b2f47b42f1e8386dcbfc78867f26995db5c1"
+    },
+    {
+      "path": "models/heroes/pudge/hair.vmdl_c",
+      "size": 335372,
+      "sha256": "c52963fcf3e9266aafeff2d5032f370c989c920c9eef44ff86d94c16ebee0793"
+    },
+    {
+      "path": "models/heroes/pudge/leftarm.vmdl_c",
+      "size": 305081,
+      "sha256": "9e2eddd50f0c5e711c7e701e1fa394bb29d6f8ecb669cf0fc28c912f2c79f94b"
+    },
+    {
+      "path": "models/heroes/pudge/pudge.vmdl_c",
+      "size": 12241297,
+      "sha256": "ea8ad666ca890f983242b81482c6bccfc93f6c3709f1be09a7753e71b95755da"
+    },
+    {
+      "path": "models/heroes/pudge/righthook.vmdl_c",
+      "size": 438944,
+      "sha256": "9398dcc3fb76320abe8cfd7cb83513a87d6fe9942af0f90e31c1acd01e5ad8e5"
+    },
+    {
+      "path": "models/heroes/queenofpain/hair.vmdl_c",
+      "size": 263931,
+      "sha256": "4359f27b212e4e585ea626014a2229fa46e228fc20d2be13dce5f4f40eb6b4ef"
+    },
+    {
+      "path": "models/heroes/queenofpain/queenofpain.vmdl_c",
+      "size": 20956619,
+      "sha256": "6df1fd8591b2bfc8075200d6285da6b6799b1cebce30959f3f2f8cb74ca1db75"
+    },
+    {
+      "path": "models/heroes/queenofpain/queenofpain_armor.vmdl_c",
+      "size": 4431,
+      "sha256": "cc386401ecbb9a0899dbdb87cb92ce10c37ee7681ee597c02c8d3d47153fa4b9"
+    },
+    {
+      "path": "models/heroes/queenofpain/queenofpain_head_item.vmdl_c",
+      "size": 4431,
+      "sha256": "559d62cbc4ea3a3ad45aa2c900b37c8fcce46f1d56a2cf02e67dcf798c378cd0"
+    },
+    {
+      "path": "models/heroes/queenofpain/queenofpain_legs.vmdl_c",
+      "size": 4431,
+      "sha256": "e5adb04702a2357f5becdc753621a4373a7ecf009060c020a84999fe9bac03c9"
+    },
+    {
+      "path": "models/heroes/queenofpain/queenofpain_weapon.vmdl_c",
+      "size": 88548,
+      "sha256": "2b73c57ecceccd2ad8fccbb13f2198b3a71908579ac3ce3981ea70b08f46a911"
+    },
+    {
+      "path": "models/heroes/queenofpain/shoulders.vmdl_c",
+      "size": 939838,
+      "sha256": "69f393f803565878789085aaab7f0c79f3b69f3dcb45366214d85cd708c1730c"
+    },
+    {
+      "path": "models/heroes/queenofpain/wings.vmdl_c",
+      "size": 510044,
+      "sha256": "641ae49db42abb5f3f365c4b4c83de61b4f585629045ebb3a894d5078085c0d0"
+    },
+    {
+      "path": "models/heroes/terrorblade/demon.vmdl_c",
+      "size": 362306,
+      "sha256": "9bfeb21ee84310ebb65623e0dab37f23978a38ddcff95563689adc6d618698a4"
+    },
+    {
+      "path": "models/heroes/terrorblade/horns.vmdl_c",
+      "size": 18066,
+      "sha256": "25ff05257e1d0bc155f976c07b9f490213583d292091e2039838a544df30538f"
+    },
+    {
+      "path": "models/heroes/terrorblade/terrorblade.vmdl_c",
+      "size": 473605,
+      "sha256": "499f67b2ee491cd031b5fb0d26738d8ee51fd8fee1def3cfc0d3bea2295444a3"
+    },
+    {
+      "path": "models/items/drow/drow_arcana/drow_arcana_frost.vmdl_c",
+      "size": 66207,
+      "sha256": "d16542c269cfa399e747c4ad1bfa68244ec386733e8c2bb79aaed24961c39025"
+    }
+  ]
+}

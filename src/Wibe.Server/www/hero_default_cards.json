@@ -1,0 +1,54 @@
+{
+ "Kez": [
+  {
+   "id": 818,
+   "name": "Kez's Weapon",
+   "slot": "misc",
+   "rarity": ""
+  },
+  {
+   "id": 819,
+   "name": "Kez's Head",
+   "slot": "head",
+   "rarity": ""
+  },
+  {
+   "id": 820,
+   "name": "Kez's Upper Body",
+   "slot": "shoulder",
+   "rarity": ""
+  },
+  {
+   "id": 821,
+   "name": "Kez's Lower Body",
+   "slot": "belt",
+   "rarity": ""
+  },
+  {
+   "id": 829,
+   "name": "Kez's Offhand Weapons",
+   "slot": "offhand_weapon",
+   "rarity": ""
+  }
+ ],
+ "Largo": [
+  {
+   "id": 857,
+   "name": "Largo's Upper Body",
+   "slot": "shoulder",
+   "rarity": ""
+  },
+  {
+   "id": 858,
+   "name": "Largo's Lower Body",
+   "slot": "legs",
+   "rarity": ""
+  },
+  {
+   "id": 859,
+   "name": "Largo's Instrument",
+   "slot": "misc",
+   "rarity": ""
+  }
+ ]
+}

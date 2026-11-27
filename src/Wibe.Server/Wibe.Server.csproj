@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Wibe.Server</RootNamespace>
+    <AssemblyName>WibeFittingRoom</AssemblyName>
+    <AssemblyTitle>ICDK</AssemblyTitle>
+    <Version>1.0.0</Version>
+    <FileVersion>1.4.0.0</FileVersion>
+    <ApplicationIcon>Assets/app.ico</ApplicationIcon>
+    <ApplicationManifest>App.manifest</ApplicationManifest>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wibe.Core\Wibe.Core.csproj" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\app.ico" LogicalName="app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="www\*.*" LogicalName="www.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="www\**\*.*" Exclude="www\*.*" LogicalName="www.%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\crops\**\*" LogicalName="crops/%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="www\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

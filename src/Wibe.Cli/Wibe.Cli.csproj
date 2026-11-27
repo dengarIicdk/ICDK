@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Wibe.Cli</RootNamespace>
+    <AssemblyName>wibe</AssemblyName>
+    <RollForward>Major</RollForward>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wibe.Core\Wibe.Core.csproj" />
+  </ItemGroup>
+
+</Project>

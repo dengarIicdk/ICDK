@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="ICDK">
+  <title>ICDK</title>
+  <defs>
+    <linearGradient id="icdk-red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#EF4444"/>
+      <stop offset=".55" stop-color="#DC2626"/>
+      <stop offset="1" stop-color="#B91C1C"/>
+    </linearGradient>
+    <linearGradient id="icdk-steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#9CA3AF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- кольцо-эмблема: графитовая оправа, стальная насечка и алый сектор -->
+  <circle cx="64" cy="64" r="58.5" fill="none" stroke="#2A2E37" stroke-width="6"/>
+  <circle cx="64" cy="64" r="52.5" fill="none" stroke="url(#icdk-steel)" stroke-width="2" opacity=".9"/>
+  <circle cx="64" cy="64" r="58.5" fill="none" stroke="url(#icdk-red)" stroke-width="4.5"
+          stroke-dasharray="92 276" transform="rotate(-72 64 64)"/>
+
+  <!-- W: крупная, целиком внутри кольца -->
+  <path d="M30 56 44 98 64 74 84 98 98 56" fill="none" stroke="url(#icdk-red)"
+        stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ICDK: компактная плашка в верхней части кольца, над изломом W -->
+  <rect x="34.5" y="25" width="59" height="20" rx="5" fill="#16181C" stroke="#DC2626" stroke-width="1.4"/>
+  <text x="64" y="39.2" text-anchor="middle" fill="#FFFFFF"
+        font-family="Bahnschrift, 'Segoe UI', Inter, system-ui, sans-serif"
+        font-size="12.5" font-weight="700" letter-spacing="1.9">ICDK</text>
+</svg>

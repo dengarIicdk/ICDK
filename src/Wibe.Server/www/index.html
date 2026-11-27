@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ICDK</title>
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg" />
+  <meta name="theme-color" content="#16181C" />
+  <meta name="description" content="ICDK — примерочная Dota 2: арканы, персоны, ландшафты и мир." />
+  <link rel="stylesheet" href="/static/style.css?v=59" />
+</head>
+<body>
+  <svg class="lowpoly-bg" aria-hidden="true" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="lp1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#22262D"/><stop offset="1" stop-color="#121418"/>
+      </linearGradient>
+      <linearGradient id="lp2" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#262A31"/><stop offset="1" stop-color="#141619"/>
+      </linearGradient>
+    </defs>
+    <path d="M0 0h620L300 420 0 330z" fill="url(#lp1)"/>
+    <path d="M620 0h980v320L980 160z" fill="url(#lp2)"/>
+    <path d="M1600 320v580l-470-260z" fill="#15171B"/>
+    <path d="M0 330l300 90 130 480H0z" fill="#121418"/>
+    <path d="M1600 900H840l290-260z" fill="#1B1E23"/>
+    <path d="M300 420l650-260 180 470-700 270z" fill="#171A1F" opacity=".8"/>
+    <path d="M0 0h1600v6H0z" fill="#DC2626" opacity=".55"/>
+  </svg>
+
+  <div class="winbar" id="winbar" hidden>
+    <div class="winbar-brand">
+      <svg class="winbar-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="13" fill="none" stroke="#DC2626" stroke-width="2.2"/>
+        <text x="16" y="21" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="15" font-weight="700" fill="#F8FAFC">W</text>
+      </svg>
+      <b>ICDK</b>
+      <span class="winbar-status" id="winbar-status">примерочная</span>
+    </div>
+    <div class="winbar-drag" id="winbar-drag" title="Перетащить окно"></div>
+    <div class="winbar-buttons">
+      <button class="winbtn" id="win-min" title="Свернуть" aria-label="Свернуть">—</button>
+      <button class="winbtn" id="win-max" title="Развернуть" aria-label="Развернуть">□</button>
+      <button class="winbtn winclose" id="win-close" title="Закрыть" aria-label="Закрыть">✕</button>
+    </div>
+  </div>
+
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#/" title="ICDK — герои">
+        <span class="brand-mark sf" id="brand-reactor" title="ICDK" aria-hidden="true"><svg viewBox="0 0 96 96" class="sf-svg"><defs><linearGradient id="sfHorn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b0a0a"/><stop offset="1" stop-color="#090a0d"/></linearGradient><radialGradient id="sfEye"><stop offset="0" stop-color="#fff3f3"/><stop offset="0.45" stop-color="#ef4444"/><stop offset="1" stop-color="#7f1d1d"/></radialGradient></defs><g class="sf-horns"><path d="M20 34 C8 22 6 12 12 6 C14 18 24 24 32 30 Z" fill="url(#sfHorn)" stroke="#7f1d1d" stroke-width="0.8"/><path d="M76 34 C88 22 90 12 84 6 C82 18 72 24 64 30 Z" fill="url(#sfHorn)" stroke="#7f1d1d" stroke-width="0.8"/></g><path class="sf-skull" d="M48 16 C33 16 24 27 24 41 C24 52 29 59 34 63 L34 70 C34 74 38 77 48 77 C58 77 62 74 62 70 L62 63 C67 59 72 52 72 41 C72 27 63 16 48 16 Z" fill="#0c0d11" stroke="#2b1113" stroke-width="1.2"/><g class="sf-eyes"><path d="M34 42 L44 38 L45 44 L35 46 Z" fill="url(#sfEye)"/><path d="M62 42 L52 38 L51 44 L61 46 Z" fill="url(#sfEye)"/></g><path class="sf-maw" d="M40 60 L48 66 L56 60 L50 62 L48 58 Z" fill="#ef4444" opacity="0.85"/><path class="sf-rift" d="M48 47 L45 60 L48 72 L51 60 Z" fill="#dc2626" opacity="0.9"/><g class="sf-souls"><circle cx="30" cy="80" r="2"/><circle cx="44" cy="86" r="1.6"/><circle cx="58" cy="82" r="2.2"/><circle cx="68" cy="88" r="1.4"/><circle cx="38" cy="92" r="1.2"/></g><circle class="sf-wrath" cx="48" cy="46" r="34" fill="none" stroke="#ef4444" stroke-width="1.4" opacity="0"/></svg></span>
+        <span class="brand-copy"><b>ICDK</b><em>skin changer</em></span>
+      </a>
+
+      <nav class="mode-switch" aria-label="Разделы">
+        <a href="#/" id="mode-heroes" class="on">Герои</a>
+        <a href="#/world" id="mode-world">Мир</a>
+      </nav>
+
+      <div class="status" title="gameinfo.gi не изменяется">
+        <i class="dot ok" id="status-dot"></i>
+        <span id="status-text">Готово к матчу</span>
+      </div>
+
+      <div class="top-center">
+        <select id="active-hero" title="Активные герои примерки"></select>
+        <select id="presets" title="Сохранённые пресеты"><option value="">Пресеты</option></select>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn primary" id="btn-compile" title="Собрать один pak06_dir.vpk из всех героев примерки">Собрать мод</button>
+        <button class="btn play" id="btn-launch" title="Запустить Dota 2 с собранным модом">Играть</button>
+
+        <details class="more">
+          <summary title="Ещё">⋯</summary>
+          <div class="more-menu">
+            <button id="btn-dota-path" title="Выбрать папку установки Dota 2">Папка Dota 2</button>
+            <button id="btn-preset-save">Сохранить пресет</button>
+            <button id="btn-preset-apply">Загрузить пресет</button>
+            <button id="btn-photos" title="Декодировать все иконки косметики из pak01_dir.vpk">Обновить фото</button>
+            <button class="danger" id="btn-decompile" title="Вернуть игру к стоковому состоянию">Декомпилировать</button>
+            <span id="build-id"></span>
+          </div>
+        </details>
+      </div>
+
+      <div class="chips" id="chips" hidden>
+        <span id="chip-session"></span><i id="dot-session"></i>
+        <span id="chip-game"></span><i id="dot-game"></i>
+        <span id="chip-match"></span><i id="dot-match"></i>
+        <span id="chip-mod"></span><i id="dot-mod"></i>
+        <span id="chip-build"></span>
+      </div>
+    </header>
+
+    <main id="screen"></main>
+  </div>
+
+  <div class="path-backdrop" id="dota-modal" hidden>
+    <div class="path-card" role="dialog" aria-modal="true" aria-labelledby="dota-modal-title">
+      <div class="path-head">
+        <span class="path-mark">D2</span>
+        <div>
+          <h2 id="dota-modal-title">Папка Dota 2</h2>
+          <p>Выбери корень установки — папку <b>dota 2 beta</b> внутри <code>steamapps\common</code>.</p>
+        </div>
+      </div>
+      <div class="path-current">
+        <span>Сейчас</span>
+        <b id="dota-current">определяю…</b>
+        <em id="dota-source"></em>
+      </div>
+      <label class="path-label" for="dota-path-input">Путь к игре</label>
+      <div class="path-row">
+        <input id="dota-path-input" type="text" spellcheck="false" autocomplete="off"
+               placeholder="Z:\steam\steamapps\common\dota 2 beta" />
+        <button class="btn" id="btn-dota-browse" type="button">Обзор…</button>
+      </div>
+      <p class="path-hint" id="dota-hint">Можно указать и <code>game\dota</code> — путь найдётся автоматически.</p>
+      <div class="path-actions">
+        <button class="btn quiet" id="btn-dota-auto" type="button">Авто (Steam)</button>
+        <span class="spacer"></span>
+        <button class="btn quiet" id="btn-dota-cancel" type="button">Отмена</button>
+        <button class="btn primary" id="btn-dota-apply" type="button">Применить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="boot" id="boot">
+    <div class="box">
+      <img class="boot-logo" src="/static/logo.svg" alt="ICDK" width="92" height="92" />
+      <div class="ring"></div>
+      <p id="boot-text">запускаюсь…</p>
+    </div>
+  </div>
+
+  <script src="/static/podium.bundle.js"></script>
+  <script src="/static/app.js?v=59"></script>
+</body>
+</html>

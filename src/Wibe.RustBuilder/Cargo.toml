@@ -1,0 +1,23 @@
+[package]
+name = "wibe-rust-builder"
+version = "1.0.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+description = "WIBE FITTING ROOM's item builder: the dota2-mod-manager core as a CLI"
+
+[workspace]
+members = ["vendor/mm-core"]
+resolver = "2"
+
+[dependencies]
+mm-core = { path = "vendor/mm-core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip", "preserve_order"] }
+ureq = { version = "3", default-features = false, features = ["native-tls", "gzip"] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+strip = true
+panic = "unwind"

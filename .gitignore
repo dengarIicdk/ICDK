@@ -1,0 +1,32 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+TestResults/
+logs/
+scratch/
+artifacts/
+dist/
+images/
+preview/
+
+# кеш картинок (создаётся приложением)
+png/
+
+# Rust core build output
+src/Wibe.RustBuilder/target/
+
+# локальные выгрузки и старые exe, не входят в поставку
+/Heroes/
+/backup_0_9_36/
+
+# временная распаковка чужого установщика (не в репозиторий)
+Z:/overlay_dump/extracted/
+scratch/npt/
+
+# локальные бэкапы прошлых версий (крупные бинарники)
+/backup_*/
+
+# отладочные вырезки из скриншотов (не часть приложения)
+/crops/

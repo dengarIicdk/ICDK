@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Wibe.Core</RootNamespace>
+    <AssemblyName>Wibe.Core</AssemblyName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RustCoreExe Condition="'$(RustCoreExe)' == ''">$(MSBuildThisFileDirectory)..\Wibe.RustBuilder\target\release\wibe-rust-builder.exe</RustCoreExe>
+  </PropertyGroup>
+
+  <ItemGroup Condition="Exists('$(EngineZip)')">
+    <EmbeddedResource Include="$(EngineZip)" LogicalName="Wibe.Engine.zip" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('$(RustCoreExe)')">
+    <EmbeddedResource Include="$(RustCoreExe)" LogicalName="Wibe.RustBuilder.exe" />
+  </ItemGroup>
+
+</Project>

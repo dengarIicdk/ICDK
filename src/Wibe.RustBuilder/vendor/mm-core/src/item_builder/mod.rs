@@ -1,0 +1,677 @@
+//! The item builder: a hero's stock item built from one of its wearables, with an effect on top.
+//! This part writes a pick: the wearable's block under the stock
+//! item's id, name and prefab=default_item, without the styles and unlocks a free base item cannot
+//! use, with the chosen effects in its visuals, and the files to copy out of pak01 under the stock
+//! paths (item_builder_assets.rs).
+//!
+//! Written by h6rd (https://github.com/h6rd) in #117, developed further with TheFleece
+//! (https://github.com/TheFleece).
+//! Copyright (C) 2026 h6rd
+//! Copyright (C) 2026 TheFleece
+//! SPDX-License-Identifier: GPL-3.0-or-later
+//! The additional terms in NOTICE apply: whoever carries this code keeps both names here and in
+//! the credits of the program it goes into.
+
+// The item builder: what a pick writes, its effects, styles, sets, sounds and the look on everybody.
+pub mod ability_icons;
+pub mod ability_icons_service;
+pub mod ability_sounds;
+pub mod ability_sounds_service;
+pub mod cosmetic_names;
+pub mod empty_slot;
+pub mod hero_pedestals;
+pub mod item_builder_ability_fx;
+pub mod item_builder_assets;
+pub mod item_builder_details;
+pub mod item_builder_donor;
+pub mod item_builder_effects;
+pub mod item_builder_everyone;
+pub mod item_builder_everyone_budget;
+pub mod item_builder_fx_first;
+pub mod item_builder_fx_patch;
+pub mod item_builder_kinetic;
+pub mod item_builder_personas;
+pub mod item_builder_orphan_fx;
+pub mod item_builder_refits;
+pub mod item_builder_sets;
+pub mod item_builder_slots;
+pub mod item_builder_styles;
+pub mod item_builder_taunt;
+pub mod item_builder_taunt_anim;
+pub mod item_builder_worth;
+pub mod item_portraits;
+pub mod item_skin;
+pub mod item_sounds;
+pub mod item_visuals;
+pub mod unusual_effects;
+
+use regex::bytes::Regex;
+use serde::Serialize;
+use serde_json::json;
+use std::collections::HashSet;
+use std::sync::OnceLock;
+
+use crate::data;
+use crate::i18n::t;
+use crate::item_builder_assets::{item_assets, normalize_asset_path, AssetCopy, ItemAssets, SummonModels};
+use crate::item_builder_donor::{donor_additions, donor_of, with_modifiers};
+use crate::item_builder_effects::{append_item_effect, ItemEffect};
+use crate::item_builder_kinetic::{kinetic_name, picks_gems, with_kinetics};
+use crate::item_builder_slots::{canonical_item_slot, is_persona_item, item_heroes, match_item_slot};
+use crate::item_builder_styles::{style_of, style_picture, with_style};
+use crate::item_skin::worn_skin;
+use crate::kv::{self, latin1, to_latin1, KvError};
+use crate::schema::{inferred_item_slot, item_fields, items_of, SchemaItem};
+use crate::schema_merge::strip_key_blocks;
+use crate::unusual_effects::unusual_item_effect;
+
+fn err(e: KvError) -> String {
+    e.to_string()
+}
+
+pub(crate) fn field<'a>(fields: &'a [(String, String)], key: &str) -> Option<&'a str> {
+    fields.iter().find(|(k, _)| k == key).map(|(_, v)| v.as_str())
+}
+
+/// JS String.prototype.trim over latin1 text.
+fn js_trim(s: &[u8]) -> &[u8] {
+    let ws = |c: &u8| matches!(c, b'\t' | b'\n' | 0x0B | 0x0C | b'\r' | b' ' | 0xA0);
+    let start = s.iter().position(|c| !ws(c)).unwrap_or(s.len());
+    let end = s.iter().rposition(|c| !ws(c)).map_or(start, |i| i + 1);
+    &s[start..end.max(start)]
+}
+
+/// `line` in place of the block's first direct child `hit` picks, or added at its end.
+fn put_child(block: &[u8], hit: Option<(usize, usize)>, line: &[u8]) -> Vec<u8> {
+    if let Some((start, end)) = hit {
+        return [&block[..start], line, &block[end..]].concat();
+    }
+    match block.iter().rposition(|&c| c == b'}') {
+        None => block.to_vec(),
+        Some(close) => [&block[..close], b"\r\n\t", line, b"\r\n", &block[close..]].concat(),
+    }
+}
+
+fn first_child(block: &[u8], want: impl Fn(&kv::Child) -> bool) -> Result<Option<(usize, usize)>, KvError> {
+    let mut hit = None;
+    kv::each_child(block, kv::block_bounds(block, 0)?, |c| {
+        if hit.is_none() && want(&c) {
+            hit = Some((c.start, c.end));
+        }
+        true
+    })?;
+    Ok(hit)
+}
+
+/// The block with the scalar `key` set to `value`.
+pub fn set_scalar_field(block: &[u8], key: &str, value: &str) -> Result<Vec<u8>, KvError> {
+    let lower = key.to_lowercase();
+    let hit = first_child(block, |c| !c.is_block() && latin1(c.key).to_lowercase() == lower)?;
+    Ok(put_child(block, hit, &to_latin1(&format!("\"{key}\"\t\t\"{value}\""))))
+}
+
+/// An item block with these visuals in place of its own, or added at its end where it has none.
+pub fn set_visuals_block(block: &[u8], visuals: &[u8]) -> Result<Vec<u8>, KvError> {
+    let hit = first_child(block, |c| c.is_block() && c.key.eq_ignore_ascii_case(b"visuals"))?;
+    Ok(put_child(block, hit, js_trim(visuals)))
+}
+
+fn item_effect_by_id(id: &str) -> Option<ItemEffect> {
+    let want = id.trim().to_lowercase();
+    data::item_effects().iter().find(|e| e.id == want).cloned()
+}
+
+/// The number of a game effect's token, `unusual-<digits>`, as JS Number() reads the digits.
+fn unusual_number(token: &str) -> Option<f64> {
+    let digits = token.strip_prefix("unusual-")?;
+    (!digits.is_empty() && digits.bytes().all(|c| c.is_ascii_digit())).then(|| digits.parse().unwrap_or(f64::NAN))
+}
+
+fn is_style_token(id: &str) -> bool {
+    id.strip_prefix("style-").is_some_and(|n| !n.is_empty() && n.bytes().all(|c| c.is_ascii_digit()))
+}
+
+fn is_donor_token(id: &str) -> bool {
+    id.strip_prefix("from-").is_some_and(|n| !n.is_empty() && n.bytes().all(|c| c.is_ascii_digit()))
+}
+
+/// The effects of one pick as one string: the builder's own in the order the picker lists them,
+/// the game's by number, unknown ones sorted, then the donor and the style; each once.
+pub fn effect_key(effect_ids: &[String]) -> String {
+    let ids: Vec<String> = effect_ids.iter().map(|id| id.trim().to_lowercase()).filter(|id| !id.is_empty()).collect();
+    let mut want: Vec<&String> = Vec::new();
+    for id in &ids {
+        if !is_style_token(id) && !is_donor_token(id) && unusual_number(id).is_none() && !want.contains(&id) {
+            want.push(id);
+        }
+    }
+    let known: Vec<String> =
+        data::item_effects().iter().map(|e| e.id.clone()).filter(|id| want.contains(&id)).collect();
+    let mut unusual: Vec<String> = Vec::new();
+    for id in &ids {
+        if unusual_number(id).is_some() && !unusual.contains(id) {
+            unusual.push(id.clone());
+        }
+    }
+    unusual.sort_by(|a, b| {
+        let (x, y) = (unusual_number(a).unwrap(), unusual_number(b).unwrap());
+        x.partial_cmp(&y).unwrap_or(std::cmp::Ordering::Equal)
+    });
+    let mut unknown: Vec<String> = want.iter().filter(|id| !known.contains(id)).map(|s| s.to_string()).collect();
+    unknown.sort_by(|a, b| a.encode_utf16().cmp(b.encode_utf16()));
+    let donor = ids.iter().find(|id| is_donor_token(id)).cloned();
+    let style = style_of(&ids.join(","));
+    let mut out = known;
+    out.extend(unusual);
+    out.extend(unknown);
+    out.extend(donor);
+    if style > 0 {
+        out.push(format!("style-{style}"));
+    }
+    out.join(",")
+}
+
+/// The block under another id: its leading "<digits>" replaced.
+fn set_block_id(block: &[u8], id: &str) -> Vec<u8> {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    let re = RE.get_or_init(|| Regex::new(r#"(?-u)^[\t\n\x0B\x0C\r \xA0]*"[0-9]+""#).unwrap());
+    match re.find(block) {
+        Some(m) => [format!("\"{id}\"").as_bytes(), &block[m.end()..]].concat(),
+        None => block.to_vec(),
+    }
+}
+
+/// What an item keeps of its own when it wears another's block: what the game shows of it by name.
+const OWN_FIELDS: [&str; 6] = ["name", "prefab", "item_name", "item_description", "image_inventory", "item_rarity"];
+
+/// A built block worn as another item of the same hero and slot: the built visuals, under that
+/// item's id, its own name and picture, and the model path its block names.
+pub fn as_item(block: &[u8], text: &[u8], id: &str, start: usize, model: Option<&str>) -> Result<Vec<u8>, KvError> {
+    let own = item_fields(text, start)?;
+    let mut out = set_block_id(block, id);
+    for key in OWN_FIELDS {
+        if let Some(v) = field(&own, key).filter(|v| !v.is_empty()) {
+            out = set_scalar_field(&out, key, v)?;
+        }
+    }
+    match model.filter(|m| !m.is_empty()) {
+        Some(m) => set_scalar_field(&out, "model_player", m),
+        None => Ok(out),
+    }
+}
+
+/// The text of an item's "visuals" block (its last one), or None for an item without one.
+pub fn item_visuals(text: &[u8], start: usize) -> Result<Option<Vec<u8>>, KvError> {
+    let mut visuals = None;
+    kv::each_child(text, kv::block_bounds(text, start)?, |c| {
+        if c.is_block() && c.key.eq_ignore_ascii_case(b"visuals") {
+            visuals = Some(text[c.start..c.end].to_vec());
+        }
+        true
+    })?;
+    Ok(visuals)
+}
+
+/// A particle that draws nothing: it stands in for a stock slot's effect whose model has been
+/// replaced, so the effect cannot find its attachment bone and would otherwise play at the map's
+/// origin.
+pub const EMPTY_PARTICLE: &str = "particles/dev/empty_particle.vpcf_c";
+
+fn compiled_particle(path: &str) -> String {
+    let p = normalize_asset_path(path);
+    if p.ends_with(".vpcf") {
+        format!("{p}_c")
+    } else {
+        p
+    }
+}
+
+/// The particles a stock item's own block asks the game to create. The game's table is the
+/// server's and is never shipped: it keeps creating these over the replacement model, which has
+/// none of the stock model's attachment bones. Each such effect has to be silenced.
+pub fn stock_particle_systems(text: &[u8], start: usize) -> Result<Vec<String>, KvError> {
+    let Some(visuals) = item_visuals(text, start)? else { return Ok(vec![]) };
+    let mut out = Vec::new();
+    let bounds = kv::block_bounds(&visuals, 0)?;
+    let _ = kv::each_child(&visuals, bounds, |c| {
+        if !c.is_block() || !is_modifier_key(c.key) {
+            return true;
+        }
+        let mut ty = String::new();
+        let mut modifier = String::new();
+        let _ = kv::each_child(&visuals, c.body.unwrap_or_default(), |f| {
+            if f.is_block() {
+                return true;
+            }
+            let key = latin1(f.key).to_lowercase();
+            let value = f.value.map(latin1).unwrap_or_default();
+            if key == "type" {
+                ty = value.to_lowercase();
+            } else if key == "modifier" {
+                modifier = value;
+            }
+            true
+        });
+        if ty == "particle_create" && modifier.to_lowercase().ends_with(".vpcf") {
+            let p = compiled_particle(&modifier);
+            if !out.contains(&p) {
+                out.push(p);
+            }
+        }
+        true
+    })?;
+    Ok(out)
+}
+
+/// The response criteria an item sets: a persona's voice item.
+pub fn item_voices(text: &[u8], start: usize) -> Result<Vec<crate::item_sounds::VoiceCue>, KvError> {
+    let Some(visuals) = item_visuals(text, start)? else { return Ok(vec![]) };
+    Ok(item_assets(text, &visuals, &item_heroes(text, start)?, None)?.voices)
+}
+
+/// The stock default_item that matches a wearable by slot and by the hero(es) that can equip it.
+pub fn default_item_for_wearable(text: &[u8], source_id: &str) -> Result<Option<SchemaItem>, String> {
+    let Some((start, _)) = crate::schema_merge::items_by_id(text).map_err(err)?.find(text, source_id).map_err(err)?
+    else {
+        return Err(t("items_game: предмет {0} не найден", &[json!(source_id)]));
+    };
+    let fields = item_fields(text, start).map_err(err)?;
+    let items = items_of(text).map_err(err)?;
+    let lite = items.iter().find(|i| i.id == source_id);
+    if lite.is_some_and(is_persona_item) {
+        return Ok(None);
+    }
+    let slot = canonical_item_slot(&match field(&fields, "item_slot").filter(|s| !s.is_empty()) {
+        Some(s) => s.to_string(),
+        None => lite.map(inferred_item_slot).unwrap_or_default(),
+    });
+    if slot.is_empty() {
+        return Ok(None);
+    }
+    let match_slot = match_item_slot(&slot);
+    let heroes = item_heroes(text, start).map_err(err)?;
+    let pick = |fits: &dyn Fn(&SchemaItem) -> bool| -> Result<Option<SchemaItem>, String> {
+        let mut found: Vec<&SchemaItem> = Vec::new();
+        for i in items.iter() {
+            if i.id != source_id
+                && fits(i)
+                && i.prefab == "default_item"
+                && !is_persona_item(i)
+                && item_heroes(text, i.start).map_err(err)? == heroes
+            {
+                found.push(i);
+            }
+        }
+        let num = |i: &SchemaItem| i.id.parse::<f64>().unwrap_or(f64::NAN);
+        found.sort_by(|a, b| (num(a) - num(b)).partial_cmp(&0.0).unwrap_or(std::cmp::Ordering::Equal));
+        Ok(found.first().map(|i| (*i).clone()))
+    };
+    if let Some(i) = pick(&|i| canonical_item_slot(&inferred_item_slot(i)) == slot)? {
+        return Ok(Some(i));
+    }
+    pick(&|i| match_item_slot(&inferred_item_slot(i)) == match_slot)
+}
+
+fn is_modifier_key(key: &[u8]) -> bool {
+    key.len() >= 14 && key[..14].eq_ignore_ascii_case(b"asset_modifier") && key[14..].iter().all(u8::is_ascii_digit)
+}
+
+/// The visuals without the model swaps the built files already make (the hero's own model, a
+/// stock item's, a hero's other form, a summon's), and a persona's switch and its size.
+/// `units`: the heroes and summons whose model the pick puts under their path; `stock`: the stock
+/// models it puts another under, as normalize_asset_path writes them.
+pub fn without_file_swaps(
+    visuals: &[u8],
+    units: &HashSet<String>,
+    stock: &HashSet<String>,
+) -> Result<Vec<u8>, KvError> {
+    let mut cut: Vec<(usize, usize)> = Vec::new();
+    let mut sizes: Vec<(usize, usize)> = Vec::new();
+    let mut persona = false;
+    for c in kv::children(visuals, kv::block_bounds(visuals, 0)?)? {
+        let Some(body) = c.body else { continue };
+        if !is_modifier_key(c.key) {
+            continue;
+        }
+        let mut ty = String::new();
+        let mut asset = String::new();
+        for f in kv::children(visuals, body)? {
+            let Some(v) = f.value else { continue };
+            match latin1(f.key).to_lowercase().as_str() {
+                "type" => ty = latin1(v).to_lowercase(),
+                "asset" => asset = latin1(v),
+                _ => {}
+            }
+        }
+        if ty == "hero_scale" {
+            sizes.push((c.start, c.end));
+        }
+        if ty == "persona" {
+            persona = true;
+        }
+        if ty == "persona"
+            || (ty == "entity_model" && units.contains(&asset.to_lowercase()))
+            || ((ty == "model" || ty == "hero_model_change") && stock.contains(&normalize_asset_path(&asset)))
+        {
+            cut.push((c.start, c.end));
+        }
+    }
+    if persona {
+        cut.extend(sizes);
+    }
+    cut.sort_by_key(|a| std::cmp::Reverse(a.0));
+    let mut out = visuals.to_vec();
+    for (start, end) in cut {
+        let mut s = start;
+        while s > 0 && matches!(out[s - 1], b' ' | b'\t' | b'\r' | b'\n') {
+            s -= 1;
+        }
+        out.drain(s..end);
+    }
+    Ok(out)
+}
+
+/// What a pick writes: the block, where its model goes, and the files, sounds and voice it takes.
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct Patch {
+    pub id: String,
+    #[serde(serialize_with = "as_latin1")]
+    pub block: Vec<u8>,
+    pub own: Option<String>,
+    pub added: Vec<String>,
+    pub unplaced: bool,
+    pub kinetic: Vec<String>,
+    pub heroes: Vec<String>,
+    #[serde(flatten)]
+    pub assets: ItemAssets,
+}
+
+/// The texture an item table's `image_inventory` path is compiled to.
+fn slot_picture(image: &str) -> String {
+    let clean = normalize_asset_path(image);
+    let clean = clean.strip_prefix("panorama/images/").unwrap_or(&clean).to_string();
+    if clean.ends_with(".vtex") {
+        format!("panorama/images/{clean}_c")
+    } else {
+        format!("panorama/images/{clean}_png.vtex_c")
+    }
+}
+
+fn as_latin1<S: serde::Serializer>(b: &[u8], s: S) -> Result<S::Ok, S::Error> {
+    s.serialize_str(&latin1(b))
+}
+
+/// One paid wearable turned into the hero's stock item for that slot.
+/// `target_id`: the stock item to write it over where its slot does not say (a persona's);
+/// `summon`: the plain models of the hero's summons; `refit`: the model another pick makes of this
+/// one's, to wear in its place where the game has it.
+pub fn item_effect_patch(
+    base: &[u8],
+    item_id: &str,
+    effect_ids: &[String],
+    target_id: Option<&str>,
+    summon: Option<&mut SummonModels>,
+    refit: Option<&str>,
+) -> Result<Patch, String> {
+    let Some((source_start, source_end)) =
+        crate::schema_merge::items_by_id(base).map_err(err)?.find(base, item_id).map_err(err)?
+    else {
+        return Err(t("items_game: предмет {0} не найден", &[json!(item_id)]));
+    };
+    // the slot's own stock item picked for it: the slot worn empty (empty_slot.rs)
+    if let Some(p) = crate::empty_slot::empty_slot_patch(base, item_id)? {
+        return Ok(p);
+    }
+    let target = match target_id.filter(|i| !i.is_empty()) {
+        Some(id) => items_of(base).map_err(err)?.iter().find(|i| i.id == id).cloned(),
+        None => default_item_for_wearable(base, item_id)?,
+    };
+    let Some(target) = target else {
+        return Err(t("items_game: default_item для предмета {0} не найден", &[json!(item_id)]));
+    };
+    let key = effect_key(effect_ids);
+    let mut effects = Vec::new();
+    for id in key.split(',') {
+        if id.is_empty() || is_style_token(id) || is_donor_token(id) || kinetic_name(id).is_some() {
+            continue;
+        }
+        let effect = if unusual_number(id).is_some() {
+            unusual_item_effect(base, id).map_err(err)?
+        } else {
+            item_effect_by_id(id)
+        };
+        effects.push(effect.ok_or_else(|| t("items_game: эффект {0} не найден", &[json!(id)]))?);
+    }
+
+    let source_fields = item_fields(base, source_start).map_err(err)?;
+    let target_fields = item_fields(base, target.start).map_err(err)?;
+    let own_visuals =
+        item_visuals(base, source_start).map_err(err)?.unwrap_or_else(|| b"\"visuals\"\r\n{\r\n}".to_vec());
+    let chosen_style = style_of(&key);
+    let (styled, styled_model, applied) = with_style(&own_visuals, chosen_style).map_err(err)?;
+    // the slot square wears the picture of the style worn, not the item's first one
+    let style_image = style_picture(&own_visuals, chosen_style).map_err(err)?;
+    let source_image = style_image
+        .or_else(|| field(&source_fields, "image_inventory").map(String::from))
+        .filter(|p| !p.is_empty());
+    let target_image = field(&target_fields, "image_inventory").map(String::from).filter(|p| !p.is_empty());
+    let styled_model = styled_model.map(|m| latin1(&m)).filter(|m| !m.is_empty());
+    let mut visuals = styled;
+    let heroes = item_heroes(base, source_start).map_err(err)?;
+
+    let mut summon = summon;
+    let mut assets = item_assets(base, &visuals, &heroes, summon.as_deref_mut()).map_err(err)?;
+    let source_model =
+        styled_model.clone().or_else(|| field(&source_fields, "model_player").map(String::from)).unwrap_or_default();
+    let target_model = field(&target_fields, "model_player").unwrap_or("").to_string();
+    let under_stock = !source_model.is_empty()
+        && !target_model.is_empty()
+        && normalize_asset_path(&source_model) != normalize_asset_path(&target_model);
+    // A style the item itself does not name is still the skin its whole bundle wears: an
+    // arcana's pauldrons carry no style block of their own, but their model holds both
+    // material sets, so the second style is set 1. An item with its own looks keeps the
+    // style block's answer (with_style already made the picked one the first).
+    let fallback_skin = if applied { 0 } else { chosen_style as u64 };
+    let skin = Some(worn_skin(&visuals, fallback_skin, None).map_err(err)?).filter(|&s| s != 0);
+    if under_stock {
+        let mut first = Vec::new();
+        if let Some(r) = refit.filter(|r| !r.is_empty()) {
+            first.push(AssetCopy::Path {
+                from: r.to_string(),
+                to: target_model.clone(),
+                optional: Some(true),
+                skin,
+                form: None,
+            });
+        }
+        // An item whose own type name is not the slot's (Pugna's "Horns" on a "Head" slot) is an
+        // add-on: the stock part keeps its meshes and takes the item's, so the skull stays. A part
+        // the item wears whole goes over the stock one as usual.
+        let type_of = |f: &[(String, String)]| {
+            f.iter()
+                .find(|(k, _)| k == "item_type_name")
+                .map(|(_, t)| t.trim().to_lowercase())
+                .unwrap_or_default()
+        };
+        let (mine, theirs) = (type_of(&source_fields), type_of(&target_fields));
+        first.push(if !mine.is_empty() && !theirs.is_empty() && mine != theirs {
+            AssetCopy::Part { from: source_model.clone(), to: target_model.clone(), skin }
+        } else {
+            AssetCopy::Path {
+                from: source_model.clone(),
+                to: target_model.clone(),
+                optional: None,
+                skin,
+                form: None,
+            }
+        });
+        // A persona's own slot: the base repository can carry an empty model at the item's own
+        // path. Put the real one there too, so the base's attachment and animations still find it.
+        if target_id.is_some_and(|i| !i.is_empty()) {
+            first.push(AssetCopy::Path {
+                from: source_model.clone(),
+                to: source_model.clone(),
+                optional: Some(true),
+                skin,
+                form: None,
+            });
+        }
+        let lead = first.len();
+        assets.asset_copies.splice(0..0, first);
+        // A slot the game gives more than one form keeps a model for each: Night Stalker wears
+        // `model_player` by day and `model_player1` at night. A set that ships both must land on
+        // both, or the night half of the hero goes back to the stock parts.
+        let mut forms = Vec::new();
+        for n in 1..8u32 {
+            let key = format!("model_player{n}");
+            let Some(from) = field(&source_fields, &key).filter(|m| !m.is_empty()) else { continue };
+            let Some(to) = field(&target_fields, &key).filter(|m| !m.is_empty()) else { continue };
+            if normalize_asset_path(&from) == normalize_asset_path(&to) {
+                continue;
+            }
+            forms.push(AssetCopy::Path { from: from.to_string(), to: to.to_string(), optional: Some(true), skin, form: Some(true) });
+        }
+        assets.asset_copies.splice(lead..lead, forms);
+    } else if !source_model.is_empty() {
+        // A wearable the stock slot has no model of its own for (Earthshaker's head under the
+        // arcana body): keep its real model at its own path instead of dropping it as unplaced.
+        assets.asset_copies.push(AssetCopy::Path {
+            from: source_model.clone(),
+            to: source_model.clone(),
+            optional: Some(true),
+            skin,
+            form: None,
+        });
+    }
+    // The stock block stays in the server's table, which is not shipped: it keeps creating the
+    // stock item's own systems over the model now at its path. That model has none of the stock
+    // model's bones, so every such system drops its control points at 0,0,0. Replace each with a
+    // particle that draws nothing, unless this pick already supplies that exact path.
+    if under_stock {
+        let taken: HashSet<String> =
+            assets.asset_copies.iter().filter_map(|c| match c { AssetCopy::Path { to, .. } => Some(normalize_asset_path(to)), _ => None }).collect();
+        for system in stock_particle_systems(base, target.start).map_err(err)? {
+            if taken.contains(&system) {
+                continue;
+            }
+            assets.asset_copies.push(AssetCopy::Path {
+                from: EMPTY_PARTICLE.to_string(),
+                to: system,
+                optional: Some(true),
+                skin: None,
+                form: None,
+            });
+        }
+    }
+    // an item with no model of its own that only puts the hero in another material set (the
+    // Diretide Shimmer costumes): the server picks the set, never the table, so the set goes into
+    // the hero's body and stock items as files
+    let reskins = source_model.is_empty() && !assets.asset_copies.iter().any(|c| matches!(c, AssetCopy::Hero { .. }));
+    if let Some(skin) = skin.filter(|_| reskins) {
+        for hero in &heroes {
+            assets.asset_copies.push(AssetCopy::Hero {
+                from: String::new(),
+                hero: hero.clone(),
+                activities: Vec::new(),
+                skin: Some(skin),
+            });
+        }
+        for model in crate::item_builder_slots::stock_models(base, &heroes).map_err(err)? {
+            assets.asset_copies.push(AssetCopy::Path {
+                from: model.clone(),
+                to: model,
+                optional: Some(true),
+                skin: Some(skin),
+                form: None,
+            });
+        }
+    }
+
+    let mut copied_units = HashSet::new();
+    let mut copied_stock = HashSet::new();
+    for c in &assets.asset_copies {
+        match c {
+            AssetCopy::Hero { hero, .. } => {
+                copied_units.insert(hero.clone());
+            }
+            AssetCopy::Unit { unit, to, .. } => {
+                copied_units.insert(unit.clone());
+                copied_stock.insert(normalize_asset_path(to));
+            }
+            AssetCopy::Path { to, .. } | AssetCopy::Part { to, .. } => {
+                copied_stock.insert(normalize_asset_path(to));
+            }
+        }
+    }
+    visuals = without_file_swaps(&visuals, &copied_units, &copied_stock).map_err(err)?;
+    visuals = strip_key_blocks(&visuals, "unlock");
+    if !applied {
+        visuals = strip_key_blocks(&visuals, "styles");
+    }
+    for effect in &effects {
+        visuals = append_item_effect(&visuals, effect).map_err(err)?;
+    }
+    if let Some(donor) = donor_of(&key) {
+        let added = donor_additions(base, &visuals, &donor)?;
+        visuals = with_modifiers(&visuals, &added);
+        let extra_visuals = [&b"\"visuals\"\r\n{\r\n"[..], &added.join(&b"\r\n"[..]), b"\r\n}"].concat();
+        let extra = item_assets(base, &extra_visuals, &heroes, summon).map_err(err)?;
+        assets.asset_copies.extend(extra.asset_copies);
+        assets.sounds.extend(extra.sounds);
+    }
+
+    let gems = picks_gems(base, &key)?;
+    visuals = with_kinetics(&visuals, &gems);
+
+    let mut patched = set_block_id(&base[source_start..source_end], &target.id);
+    let name = field(&target_fields, "name").filter(|n| !n.is_empty()).map(String::from).unwrap_or_else(|| {
+        if target.name.is_empty() {
+            target.id.clone()
+        } else {
+            target.name.clone()
+        }
+    });
+    patched = set_scalar_field(&patched, "name", &name).map_err(err)?;
+    patched = set_scalar_field(&patched, "prefab", "default_item").map_err(err)?;
+    if target_id.is_some_and(|i| !i.is_empty()) {
+        patched = set_scalar_field(&patched, "item_slot", &inferred_item_slot(&target)).map_err(err)?;
+    }
+    if under_stock {
+        patched = set_scalar_field(&patched, "model_player", &target_model).map_err(err)?;
+    } else if let Some(m) = &styled_model {
+        patched = set_scalar_field(&patched, "model_player", m).map_err(err)?;
+    }
+    patched = set_visuals_block(&patched, &visuals).map_err(err)?;
+    // the stock slot's own square shows the picked item's picture: the path is the stock one,
+    // the bytes are the item's (and of the style worn), so no other slot moves
+    if target_image.is_some() {
+        patched = set_scalar_field(&patched, "image_inventory", target_image.as_deref().unwrap()).map_err(err)?;
+        if let Some(from) = &source_image {
+            let to = slot_picture(target_image.as_deref().unwrap());
+            let from = slot_picture(from);
+            if !assets.asset_copies.iter().any(|c| matches!(c, AssetCopy::Path { to: t, .. } if normalize_asset_path(t) == to)) {
+                assets.asset_copies.push(AssetCopy::Path {
+                    from,
+                    to,
+                    optional: Some(true),
+                    skin: None,
+                    form: None,
+                });
+            }
+        }
+    }
+    Ok(Patch {
+        id: target.id.clone(),
+        block: patched,
+        own: under_stock.then(|| format!("{}_c", normalize_asset_path(&target_model))),
+        added: effects.iter().map(|e| e.modifier.clone()).collect(),
+        unplaced: !source_model.is_empty() && target_model.is_empty(),
+        kinetic: gems.iter().flat_map(|g| g.activities.iter().map(|a| a.1.clone())).collect(),
+        heroes,
+        assets,
+    })
+}
+
+#[cfg(test)]
+#[path = "costume_tests.rs"]
+mod costume_tests;
