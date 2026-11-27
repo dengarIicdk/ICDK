@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICDK — бесплатные скины, арканы и ландшафты для Dota 2</title>
+<meta name="description" content="ICDK — бесплатная примерочная Dota 2: арканы, личности, миксы слотов, ландшафты, башни и крипы. Работает в обычном поиске матчей, без регистрации и без вмешательства в память игры.">
+<meta name="theme-color" content="#0b0c0f">
+<meta property="og:title" content="ICDK — бесплатные скины, арканы и ландшафты для Dota 2">
+<meta property="og:description" content="Арканы, личности, миксы слотов и мир игры. Один установщик, обычный поиск матчей.">
+<meta property="og:image" content="assets/launcher.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/launcher.webp" as="image" type="image/webp">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="spot" aria-hidden="true"></div>
+
+<header class="top" id="topbar">
+  <div class="wrap top-in">
+    <a class="brand" href="#top" aria-label="ICDK">
+      <svg viewBox="0 0 128 128" aria-hidden="true">
+        <circle cx="64" cy="64" r="57" fill="#0f1115" stroke="#FF3B4E" stroke-width="6"/>
+        <text x="64" y="86" text-anchor="middle" font-family="Space Grotesk, Segoe UI, Arial, sans-serif"
+              font-size="23" font-weight="700" letter-spacing="3.4" fill="#F6F7F9">ICDK</text>
+        <path d="M26 34 L42 84 L64 48 L86 84 L102 34" fill="none" stroke="#fff" stroke-width="8"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span><b>ICDK</b><small>FITTING ROOM</small></span>
+    </a>
+    <nav class="nav">
+      <a href="#features" class="t" data-ru="Возможности" data-en="Features">Возможности</a>
+      <a href="#how" class="t" data-ru="Как установить" data-en="How to install">Как установить</a>
+      <a href="#faq" class="t" data-ru="Вопросы" data-en="FAQ">Вопросы</a>
+    </nav>
+    <div class="top-right">
+      <div class="lang" role="group" aria-label="RU / EN">
+        <button type="button" data-lang="ru" class="on">RU</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+      <a class="btn btn-red" href="#" data-download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 3v12m0 0l4.5-4.5M12 15l-4.5-4.5M4 20h16"/>
+        </svg>
+        <span class="t" data-ru="Скачать" data-en="Download">Скачать</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <canvas id="bg3d" aria-hidden="true"></canvas>
+
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="badge reveal">
+          <span class="tag">v1.4.0</span>
+          <span class="t" data-ru="публичный релиз · бесплатно" data-en="public release · free">публичный релиз · бесплатно</span>
+        </span>
+        <h1 class="reveal t"
+            data-ru='<span class="line">Бесплатные <span class="hot">скины,</span></span><span class="line"><span class="hot">арканы</span> и ландшафты</span><span class="line">для Dota 2</span>'
+            data-en='<span class="line">Free <span class="hot">skins,</span></span><span class="line"><span class="hot">arcanas</span> and terrains</span><span class="line">for Dota 2</span>'><span class="line">Бесплатные <span class="hot">скины,</span></span><span class="line"><span class="hot">арканы</span> и ландшафты</span><span class="line">для Dota 2</span></h1>
+        <p class="lead reveal t"
+           data-ru="Одна программа вместо десятка патчей: <b>139 героев</b>, личности со стилями I / II / III, миксы слотов, ландшафты, башни и крипы. Работает в обычном поиске матчей — без блокировок VAC, регистрации и вмешательства в память игры."
+           data-en="One app instead of a dozen patches: <b>139 heroes</b>, personas with styles I / II / III, slot mixes, terrains, towers and creeps. Works in regular matchmaking — no VAC risk, no sign-up, no memory patching.">Одна программа вместо десятка патчей: <b>139 героев</b>, личности со стилями I / II / III, миксы слотов, ландшафты, башни и крипы. Работает в обычном поиске матчей — без блокировок VAC, регистрации и вмешательства в память игры.</p>
+
+        <div class="dl reveal">
+          <a class="btn btn-red" href="#" data-download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 3v12m0 0l4.5-4.5M12 15l-4.5-4.5M4 20h16"/>
+            </svg>
+            <span class="t" data-ru="Скачать для Windows (v1.4.0)" data-en="Download for Windows (v1.4.0)">Скачать для Windows (v1.4.0)</span>
+          </a>
+          <a class="btn btn-ghost" href="#how">
+            <span class="t" data-ru="Как это работает" data-en="How it works">Как это работает</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14m-6-6 6 6-6 6"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="hero-stats reveal">
+          <div class="hs"><b>139</b><span class="t" data-ru="Героев и Персон" data-en="Heroes &amp; personas">Героев и Персон</span></div>
+          <div class="hs"><b>I–III</b><span class="t" data-ru="Все Арканы" data-en="All arcanas">Все Арканы</span></div>
+          <div class="hs"><b>2</b><span class="t" data-ru="Ландшафты и Башни" data-en="Terrains &amp; towers">Ландшафты и Башни</span></div>
+          <div class="hs"><b>0%</b><span class="t" data-ru="Риск VAC" data-en="VAC risk">Риск VAC</span></div>
+        </div>
+
+        <div class="meta reveal">
+          <div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg>
+            <span class="t" data-ru="Windows 10 / 11 x64" data-en="Windows 10 / 11 x64">Windows 10 / 11 x64</span>
+          </div>
+          <div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5.5c0 4.2-2.9 7.7-7 9.5-4.1-1.8-7-5.3-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            <span class="t" data-ru="Без прав администратора" data-en="No admin rights">Без прав администратора</span>
+          </div>
+          <div>
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <span class="t" data-ru="Установка — 1 минута" data-en="Install takes a minute">Установка — 1 минута</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage reveal">
+        <div class="app-frame" id="appFrame">
+          <div class="app-bar"><i></i><i></i><i></i><span>ICDK · fitting room</span></div>
+          <picture>
+            <source srcset="assets/launcher.webp" type="image/webp">
+            <img src="assets/launcher.jpg" width="1600" height="1000" alt="Окно ICDK: сетка героев, примерка, кнопки «Собрать мод» и «Играть»">
+          </picture>
+        </div>
+        <div class="reflection" aria-hidden="true"><img src="assets/launcher.webp" alt=""></div>
+      </div>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true"><i></i><span class="t" data-ru="листай" data-en="scroll">листай</span></div>
+  </section>
+
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="t" data-ru="25 аркан" data-en="25 arcanas">25 аркан</span>
+      <span class="t" data-ru="139 карточек героев" data-en="139 hero cards">139 карточек героев</span>
+      <span class="t" data-ru="личности со стилями I / II / III" data-en="personas with styles I / II / III">личности со стилями I / II / III</span>
+      <span class="t" data-ru="миксы слотов" data-en="slot mixes">миксы слотов</span>
+      <span class="t" data-ru="ландшафты патча" data-en="patch terrains">ландшафты патча</span>
+      <span class="t" data-ru="башни Света и Тьмы" data-en="Radiant and Dire towers">башни Света и Тьмы</span>
+      <span class="t" data-ru="крипы и эмблемы" data-en="creeps and emblems">крипы и эмблемы</span>
+      <span class="t" data-ru="чистый VPK-метод" data-en="clean VPK method">чистый VPK-метод</span>
+      <span class="t" data-ru="25 аркан" data-en="25 arcanas">25 аркан</span>
+      <span class="t" data-ru="139 карточек героев" data-en="139 hero cards">139 карточек героев</span>
+      <span class="t" data-ru="личности со стилями I / II / III" data-en="personas with styles I / II / III">личности со стилями I / II / III</span>
+      <span class="t" data-ru="миксы слотов" data-en="slot mixes">миксы слотов</span>
+      <span class="t" data-ru="ландшафты патча" data-en="patch terrains">ландшафты патча</span>
+      <span class="t" data-ru="башни Света и Тьмы" data-en="Radiant and Dire towers">башни Света и Тьмы</span>
+      <span class="t" data-ru="крипы и эмблемы" data-en="creeps and emblems">крипы и эмблемы</span>
+      <span class="t" data-ru="чистый VPK-метод" data-en="clean VPK method">чистый VPK-метод</span>
+    </div>
+  </div>
+
+  <section class="stats">
+    <div class="wrap stats-grid">
+      <div class="stat reveal"><b data-count="139">139</b><span class="t" data-ru="героев и личностей в сетке" data-en="heroes and personas in the grid">героев и личностей в сетке</span></div>
+      <div class="stat reveal"><b data-count="25">25</b><span class="t" data-ru="полных аркан, включая стили" data-en="full arcanas, styles included">полных аркан, включая стили</span></div>
+      <div class="stat reveal"><b data-count="125">125</b><span class="t" data-ru="образов собираются за раз" data-en="looks built per mod">образов собираются за раз</span></div>
+      <div class="stat reveal"><b data-count="10982">10982</b><span class="t" data-ru="шмоток в проверенном каталоге" data-en="items in the verified catalog">шмоток в проверенном каталоге</span></div>
+      <div class="stat reveal"><b data-count="0" data-suffix="%" data-text="100">100%</b><span class="t" data-ru="бесплатно и без регистрации" data-en="free and no sign-up">бесплатно и без регистрации</span></div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker t" data-ru="Возможности" data-en="Features">Возможности</span>
+        <h2 class="t" data-ru="Всё, что нужно для образа мечты" data-en="Everything a dream look needs">Всё, что нужно для образа мечты</h2>
+        <p class="t" data-ru="Скины, арканы, личности и целый мир вокруг героя — в одном окне и без единой правки античита."
+           data-en="Skins, arcanas, personas and the whole world around your hero — in a single window and without touching anti-cheat.">Скины, арканы, личности и целый мир вокруг героя — в одном окне и без единой правки античита.</p>
+      </div>
+
+      <div class="cards">
+        <article class="card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.1 5.6.7-4.1 3.9 1 5.6-4.9-2.7-4.9 2.7 1-5.6L4 8.8l5.6-.7z"/></svg></div>
+          <h3 class="t" data-ru="Все арканы и личности" data-en="Every arcana and persona">Все арканы и личности</h3>
+          <p class="t" data-ru="139 карточек героев и персон, стили I / II / III, миксы слотов: шлем от одной арканы, плащ от другой."
+             data-en="139 hero and persona cards, styles I / II / III, slot mixes: a helmet from one arcana, a cape from another.">139 карточек героев и персон, стили I / II / III, миксы слотов: шлем от одной арканы, плащ от другой.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M3 18l6-9 4 6 3-4 5 7z"/><circle cx="17" cy="6" r="2"/></svg></div>
+          <h3 class="t" data-ru="Мир игры" data-en="The game world">Мир игры</h3>
+          <p class="t" data-ru="Ландшафты на настоящей карте патча, башни Света и Тьмы, крипы и эмблемы — без поломки карты и миникарты."
+             data-en="Terrains on the real patch map, Radiant and Dire towers, creeps and emblems — the map and minimap stay intact.">Ландшафты на настоящей карте патча, башни Света и Тьмы, крипы и эмблемы — без поломки карты и миникарты.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.2-2.9 7.7-7 9.5-4.1-1.8-7-5.3-7-9.5V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3 class="t" data-ru="100% безопасность" data-en="100% account-safe">100% безопасность</h3>
+          <p class="t" data-ru="Чистый VPK-метод: файлы рядом с игрой, gameinfo.gi, подписи и память процесса не тронуты. Обратная сборка — одна кнопка."
+             data-en="A plain VPK method: files next to the game; gameinfo.gi, signatures and process memory untouched. One click reverts it.">Чистый VPK-метод: файлы рядом с игрой, gameinfo.gi, подписи и память процесса не тронуты.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"/><circle cx="12" cy="12" r="8"/></svg></div>
+          <h3 class="t" data-ru="Полностью бесплатно" data-en="Completely free">Полностью бесплатно</h3>
+          <p class="t" data-ru="Без регистрации, подписок и доната: скачал, выбрал сет, нажал «Играть»."
+             data-en="No sign-up, no subscriptions, no tips: download, pick a set, press Play.">Без регистрации, подписок и доната: скачал, выбрал сет, нажал «Играть».</p>
+        </article>
+        <article class="card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg></div>
+          <h3 class="t" data-ru="Сборка за минуту" data-en="Built in a minute">Сборка за минуту</h3>
+          <p class="t" data-ru="Своё ядро сборки: 125 образов и мир игры складываются в один файл мода, готовый к обычному поиску матчей."
+             data-en="An in-house build core: 125 looks and the game world fold into one mod file that regular matchmaking accepts.">Своё ядро сборки: 125 образов и мир игры складываются в один файл мода, готовый к обычному поиску матчей.</p>
+        </article>
+        <article class="card reveal">
+          <div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8"/></svg></div>
+          <h3 class="t" data-ru="Одно тёмное окно" data-en="One dark window">Одно тёмное окно</h3>
+          <p class="t" data-ru="Безрамочный лаунчер на WebView2: сетка героев, превью слотов и запуск игры в один клик."
+             data-en="A frameless WebView2 launcher: the hero grid, slot previews and game launch in one click.">Безрамочный лаунчер на WebView2: сетка героев, превью слотов и запуск игры в один клик.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker t" data-ru="Установка" data-en="Install">Установка</span>
+        <h2 class="t" data-ru="Как установить за 1 минуту" data-en="Install in one minute">Как установить за 1 минуту</h2>
+        <p class="t" data-ru="Никаких архивов, распаковок и ручных папок." data-en="No zip files, no manual folders.">Никаких архивов, распаковок и ручных папок.</p>
+      </div>
+      <div class="steps">
+        <article class="step reveal">
+          <div class="num">1</div>
+          <h3 class="t" data-ru="Запустите установщик" data-en="Run the installer">Запустите установщик</h3>
+          <p class="t" data-ru="ICDK ставится в профиль пользователя, права администратора не нужны. WebView2 Runtime доставится сам, если его нет."
+             data-en="ICDK installs into your user profile, no admin rights required. The WebView2 Runtime installs itself if missing.">ICDK ставится в профиль пользователя, права администратора не нужны. WebView2 Runtime доставится сам, если его нет.</p>
+        </article>
+        <article class="step reveal">
+          <div class="num">2</div>
+          <h3 class="t" data-ru="Выберите образы героев" data-en="Pick your hero looks">Выберите образы героев</h3>
+          <p class="t" data-ru="Откройте героя, наденьте аркану, личность или микс слотов. Образы сохраняются и переиспользуются."
+             data-en="Open a hero, wear an arcana, a persona or a slot mix. Looks are saved and reusable.">Откройте героя, наденьте аркану, личность или микс слотов. Образы сохраняются и переиспользуются.</p>
+        </article>
+        <article class="step reveal">
+          <div class="num">3</div>
+          <h3 class="t" data-ru="Соберите мод и играйте" data-en="Build the mod and play">Соберите мод и играйте</h3>
+          <p class="t" data-ru="«Собрать мод» пишет файлы в игру, «Играть» запускает Dota 2. Сток возвращается кнопкой «Снять»."
+             data-en="Build writes the files into the game, Play launches Dota 2. One click on Revert brings the stock look back.">«Собрать мод» пишет файлы в игру, «Играть» запускает Dota 2. Сток возвращается кнопкой «Снять».</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker t" data-ru="Вопросы" data-en="FAQ">Вопросы</span>
+        <h2 class="t" data-ru="Коротко о главном" data-en="The short answers">Коротко о главном</h2>
+      </div>
+      <div class="faq">
+        <details class="reveal" open>
+          <summary class="t" data-ru="Это безопасно для аккаунта? Не будет ли VAC?" data-en="Is it account-safe? Will VAC ban me?">Это безопасно для аккаунта? Не будет ли VAC?</summary>
+          <p class="t" data-ru="ICDK не читает и не пишет память Dota 2, не внедряет DLL и не меняет античит-файлы (<code>gameinfo.gi</code>, <code>dota.signatures</code>). Он кладёт обычные игровые файлы в локальную папку мода — так же, как это делает сам клиент игры. Стоковые файлы всегда возвращаются кнопкой «Снять»."
+             data-en="ICDK never reads or writes Dota 2 memory, injects no DLL and changes no anti-cheat files (<code>gameinfo.gi</code>, <code>dota.signatures</code>). It only places regular game files into a local mod folder, the same way the game client does.">ICDK не читает и не пишет память Dota 2, не внедряет DLL и не меняет античит-файлы (<code>gameinfo.gi</code>, <code>dota.signatures</code>).</p>
+        </details>
+        <details class="reveal">
+          <summary class="t" data-ru="Почему Windows показывает синее окно «Система защитила ваш компьютер»?" data-en="Why does Windows show the blue SmartScreen warning?">Почему Windows показывает синее окно «Система защитила ваш компьютер»?</summary>
+          <p class="t" data-ru="Это SmartScreen: он недоверчиво относится к любой новой программе без платного сертификата подписи (около $400 в год). Предупреждение не значит, что в файле вирус. Нажмите «Подробнее» → «Выполнить в любом случае». Хеш SHA256 установщика напечатан в подвале сайта — его можно сверить на VirusTotal."
+             data-en="That is SmartScreen: it distrusts any new program without a paid code-signing certificate (about $400 a year). The warning does not mean the file is infected. Click More info → Run anyway. The installer SHA256 is printed in the footer, so you can check it on VirusTotal.">Это SmartScreen: он недоверчиво относится к любой новой программе без платного сертификата подписи (около $400 в год). Нажмите «Подробнее» → «Выполнить в любом случае».</p>
+        </details>
+        <details class="reveal">
+          <summary class="t" data-ru="Нужны ли права администратора?" data-en="Do I need admin rights?">Нужны ли права администратора?</summary>
+          <p class="t" data-ru="Нет. Установка идёт в профиль пользователя, мод пишется в папку игры, к которой у вас и так есть доступ. UAC не появится."
+             data-en="No. It installs into your user profile and writes the mod into the game folder you already have access to. No UAC prompt.">Нет. Установка идёт в профиль пользователя, мод пишется в папку игры, к которой у вас и так есть доступ.</p>
+        </details>
+        <details class="reveal">
+          <summary class="t" data-ru="Другие игроки увидят мой скин?" data-en="Will other players see my skin?">Другие игроки увидят мой скин?</summary>
+          <p class="t" data-ru="Нет: файлы лежат только на вашем компьютере, поэтому образы видны вам. Соперники видят обычные модели — это ограничение клиентской подмены."
+             data-en="No: the files live only on your machine, so the looks are yours. Opponents see the regular models — that is how client-side replacement works.">Нет: файлы лежат только на вашем компьютере, поэтому образы видны вам. Соперники видят обычные модели — это ограничение клиентской подмены.</p>
+        </details>
+        <details class="reveal">
+          <summary class="t" data-ru="Как удалить ICDK и вернуть сток?" data-en="How do I uninstall ICDK and get the stock look back?">Как удалить ICDK и вернуть сток?</summary>
+          <p class="t" data-ru="Сначала нажмите «Снять» в приложении — игра вернётся к стоковым файлам. Затем удалите ICDK через «Программы и компоненты» или ярлык «Удалить ICDK» в меню «Пуск»."
+             data-en="First press Revert in the app so the game returns to stock files. Then uninstall ICDK from Apps &amp; features or the Uninstall ICDK shortcut in the Start menu.">Сначала нажмите «Снять» в приложении — игра вернётся к стоковым файлам. Затем удалите ICDK через «Программы и компоненты».</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta reveal">
+        <div>
+          <h2 class="t" data-ru="Соберите свой образ прямо сейчас" data-en="Build your look right now">Соберите свой образ прямо сейчас</h2>
+          <p class="t" data-ru="Один установщик, 479 МБ, без регистрации. Сток всегда возвращается одной кнопкой."
+             data-en="One installer, 479 MB, no sign-up. The stock look always comes back with one button.">Один установщик, 479 МБ, без регистрации. Сток всегда возвращается одной кнопкой.</p>
+        </div>
+        <a class="btn btn-red" href="#" data-download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 3v12m0 0l4.5-4.5M12 15l-4.5-4.5M4 20h16"/>
+          </svg>
+          <span class="t" data-ru="Скачать ICDK v1.4.0" data-en="Download ICDK v1.4.0">Скачать ICDK v1.4.0</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div class="brand" style="margin-bottom:14px">
+          <svg viewBox="0 0 128 128" aria-hidden="true">
+            <circle cx="64" cy="64" r="57" fill="#0f1115" stroke="#FF3B4E" stroke-width="6"/>
+            <text x="64" y="86" text-anchor="middle" font-family="Space Grotesk, Segoe UI, Arial, sans-serif"
+                  font-size="23" font-weight="700" letter-spacing="3.4" fill="#F6F7F9">ICDK</text>
+            <path d="M26 34 L42 84 L64 48 L86 84 L102 34" fill="none" stroke="#fff" stroke-width="8"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span><b>ICDK</b><small>FITTING ROOM</small></span>
+        </div>
+        <p class="t" style="margin:0;max-width:22em;color:var(--muted-2);font-size:13.2px"
+           data-ru="Примерочная Dota 2: арканы, личности, миксы слотов и мир игры. Бесплатно."
+           data-en="A Dota 2 fitting room: arcanas, personas, slot mixes and the game world. Free.">Примерочная Dota 2: арканы, личности, миксы слотов и мир игры. Бесплатно.</p>
+      </div>
+      <div class="foot-col">
+        <h4 class="t" data-ru="Продукт" data-en="Product">Продукт</h4>
+        <a href="#features" class="t" data-ru="Возможности" data-en="Features">Возможности</a>
+        <a href="#how" class="t" data-ru="Как установить" data-en="How to install">Как установить</a>
+        <a href="#faq" class="t" data-ru="Вопросы" data-en="FAQ">Вопросы</a>
+        <a href="#" data-download class="t" data-ru="Скачать установщик" data-en="Download installer">Скачать установщик</a>
+      </div>
+      <div class="foot-col">
+        <h4 class="t" data-ru="Сообщество" data-en="Community">Сообщество</h4>
+        <a href="#" data-telegram target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M21.9 4.3L18.7 20c-.2 1-.9 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6 8.4-7.6c.4-.3-.1-.5-.6-.2L7.1 13.1 2.6 11.7c-1-.3-1-1 .2-1.4L20.4 3.2c.8-.3 1.6.2 1.5 1.1z"/></svg>
+          Telegram
+        </a>
+        <a href="#" data-discord target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M19.5 5.3A16 16 0 0015.4 4l-.3.6a12 12 0 013.5 1.7 11.4 11.4 0 00-9.2 0A12 12 0 0113 4.6L12.6 4a16 16 0 00-4.1 1.3C5.6 9.3 4.8 13.3 5.2 17a16 16 0 004.9 2.5l.6-1a10 10 0 01-1.7-.8l.4-.3a11.5 11.5 0 009.8 0l.4.3a10 10 0 01-1.7.8l.6 1A16 16 0 0019.9 17c.5-4.3-.6-8.3-2.4-11.7zM9.7 14.7c-.9 0-1.7-.9-1.7-1.9s.7-1.9 1.7-1.9 1.7.9 1.7 1.9-.8 1.9-1.7 1.9zm4.7 0c-.9 0-1.7-.9-1.7-1.9s.7-1.9 1.7-1.9 1.7.9 1.7 1.9-.8 1.9-1.7 1.9z"/></svg>
+          Discord
+        </a>
+        <a href="#" data-releases target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-3.2 19.5c.5.1.7-.2.7-.5v-1.9c-2.8.6-3.4-1.3-3.4-1.3-.4-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.3 9.3 0 015 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0012 2z"/></svg>
+          <span class="t" data-ru="Релизы на GitHub" data-en="GitHub releases">Релизы на GitHub</span>
+        </a>
+      </div>
+      <div class="foot-col">
+        <h4 class="t" data-ru="Файлы" data-en="Files">Файлы</h4>
+        <a href="#" data-download class="t" data-ru="ICDK_Setup_v1.4.0.exe" data-en="ICDK_Setup_v1.4.0.exe">ICDK_Setup_v1.4.0.exe</a>
+        <span class="t" style="display:block;padding:5px 0;font-size:12.4px;color:var(--muted-2)"
+              data-ru="479 МБ · Windows 10 / 11 x64" data-en="479 MB · Windows 10 / 11 x64">479 МБ · Windows 10 / 11 x64</span>
+        <span style="display:block;padding:5px 0;font-size:12px;color:var(--muted-2);word-break:break-all" id="hashline"></span>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="t" data-ru="© 2026 ICDK. Бесплатный некоммерческий проект." data-en="© 2026 ICDK. A free non-commercial project.">© 2026 ICDK. Бесплатный некоммерческий проект.</span>
+      <span class="t legal" data-ru="Dota 2 и её содержимое принадлежат Valve Corporation; проект не связан с Valve и не одобрен ею. Скины видны только на вашем клиенте."
+            data-en="Dota 2 and its content belong to Valve Corporation; this project is not affiliated with or endorsed by Valve. Skins are visible on your client only.">Dota 2 и её содержимое принадлежат Valve Corporation; проект не связан с Valve.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script type="module" src="scene.js"></script>
+</body>
+</html>
